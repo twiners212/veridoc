@@ -36,7 +36,7 @@ Multi-tenant **Document & SOP Approval Workspace** built for controlled authorin
 
 ## Technology Stack
 
-- **Framework & UI:** Next.js `15.1.7` (App Router), React `19`, TypeScript (`strict`), Tailwind CSS `3.4`, Lucide icons, GSAP
+- **Framework & UI:** Next.js `15.1.12` (App Router), React `19`, TypeScript (`strict`), Tailwind CSS `3.4`, Lucide icons, GSAP
 - **Database & ORM:** PostgreSQL (Supabase), Drizzle ORM (`0.39`), SQL migrations (`drizzle/0000`–`0004`)
 - **Authentication & Validation:** Better Auth (`1.1`), Zod (`3.24`), TanStack Query (`5`)
 - **Storage & Notifications:** Supabase Storage (private bucket), Resend API (with console fallback in local dev)
