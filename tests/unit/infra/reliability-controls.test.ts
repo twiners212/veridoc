@@ -1,5 +1,23 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
 import { NextRequest } from "next/server";
+
+vi.mock("@/lib/auth/server", () => ({
+  resolveApiRequestContext: vi.fn(async (req: NextRequest) => ({
+    tenantId: req.headers.get("x-tenant-id") ?? "11111111-1111-4111-8111-111111111111",
+    userId: req.headers.get("x-user-id") ?? "44444444-4444-4444-8444-444444444444",
+  })),
+}));
+
+vi.mock("@/server/security/rate-limiter", () => ({
+  consumeDistributedRateLimit: vi.fn(async () => ({
+    allowed: true,
+    limit: 20,
+    remaining: 19,
+    retryAfterSeconds: 0,
+    resetUnixSeconds: 9999999999,
+  })),
+  createRateLimitResponse: vi.fn(),
+}));
 import type { TenantTransaction } from "@/db/context";
 import {
   tenants,

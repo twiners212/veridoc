@@ -15,10 +15,12 @@ import {
   cleanupTestTenants,
   cleanupTestUsers,
 } from "../../helpers/db";
+import { installPlaceholderStorageFetchStub } from "../../helpers/storage-ci-stub";
 import { GET } from "@/app/api/documents/[documentId]/versions/[versionId]/preview-url/route";
 import { uploadDocumentPdf, deleteDocumentPdf } from "@/lib/storage/storage.service";
 
 describe("Signed Preview URL & RBAC Document Visibility (preview-url/route.ts)", () => {
+  let restoreStorageStub: () => void = () => {};
   let tenantId: string;
   let adminUserId: string;
   let authorUserId: string;
@@ -37,6 +39,7 @@ describe("Signed Preview URL & RBAC Document Visibility (preview-url/route.ts)",
   let pubStorageKey: string;
 
   beforeAll(async () => {
+    restoreStorageStub = installPlaceholderStorageFetchStub();
     // 1. Create Workspace
     const [t] = await testAdminDb
       .insert(tenants)
@@ -237,6 +240,7 @@ describe("Signed Preview URL & RBAC Document Visibility (preview-url/route.ts)",
     if (draftStorageKey) await deleteDocumentPdf(draftStorageKey).catch(() => {});
     if (pendingStorageKey) await deleteDocumentPdf(pendingStorageKey).catch(() => {});
     if (pubStorageKey) await deleteDocumentPdf(pubStorageKey).catch(() => {});
+    restoreStorageStub();
     await cleanupTestTenants(tenantIds);
     await cleanupTestUsers(userIds);
   });

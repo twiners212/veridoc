@@ -15,9 +15,11 @@ import {
   cleanupTestTenants,
   cleanupTestUsers,
 } from "../../helpers/db";
+import { installPlaceholderStorageFetchStub } from "../../helpers/storage-ci-stub";
 import { POST } from "@/app/api/documents/[documentId]/versions/[versionId]/upload/route";
 
 describe("PDF Upload Security & Storage Boundary (POST /api/documents/.../upload)", () => {
+  let restoreStorageStub: () => void = () => {};
   let tenantId: string;
   let authorUserId: string;
   let adminUserId: string;
@@ -29,6 +31,7 @@ describe("PDF Upload Security & Storage Boundary (POST /api/documents/.../upload
   const tenantIds: string[] = [];
 
   beforeAll(async () => {
+    restoreStorageStub = installPlaceholderStorageFetchStub();
     // 1. Create Workspace
     const [t] = await testAdminDb
       .insert(tenants)
@@ -143,6 +146,7 @@ describe("PDF Upload Security & Storage Boundary (POST /api/documents/.../upload
   });
 
   afterAll(async () => {
+    restoreStorageStub();
     await cleanupTestTenants(tenantIds);
     await cleanupTestUsers(userIds);
   });
