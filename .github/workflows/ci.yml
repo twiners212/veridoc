@@ -261,9 +261,13 @@ jobs:
           pnpm db:migrate
 
       - name: Deploy production build to Vercel
-        if: ${{ secrets.VERCEL_TOKEN != '' }}
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: pnpm dlx vercel@latest deploy --prod --yes --token="$VERCEL_TOKEN"
+        run: |
+          if [ -n "$VERCEL_TOKEN" ]; then
+            pnpm dlx vercel@latest deploy --prod --yes --token="$VERCEL_TOKEN"
+          else
+            echo "VERCEL_TOKEN not set; skipping CLI deploy"
+          fi
