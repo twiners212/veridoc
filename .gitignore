@@ -40,3 +40,4 @@ Thumbs.db
 .cursor/
 .windsurf/
 skills-lock.json
+.vercel
