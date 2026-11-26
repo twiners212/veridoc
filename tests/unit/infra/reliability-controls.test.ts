@@ -308,12 +308,17 @@ describe("Wave 2 Unit Tests: Reliability & Security Controls", () => {
   });
 
   describe("4. isDemoLoginEnabled() production guard", () => {
-    it("returns false unconditionally when VERCEL_ENV === 'production' even if ENABLE_DEMO_LOGIN === 'true'", () => {
+    it("requires explicit ENABLE_DEMO_LOGIN === 'true' when VERCEL_ENV === 'production'", () => {
       Reflect.set(process.env, "VERCEL_ENV", "production");
-      Reflect.set(process.env, "NODE_ENV", "development");
-      Reflect.set(process.env, "ENABLE_DEMO_LOGIN", "true");
-
+      Reflect.set(process.env, "NODE_ENV", "production");
+      Reflect.deleteProperty(process.env, "ENABLE_DEMO_LOGIN");
       expect(isDemoLoginEnabled()).toBe(false);
+
+      Reflect.set(process.env, "ENABLE_DEMO_LOGIN", "false");
+      expect(isDemoLoginEnabled()).toBe(false);
+
+      Reflect.set(process.env, "ENABLE_DEMO_LOGIN", "true");
+      expect(isDemoLoginEnabled()).toBe(true);
     });
   });
 

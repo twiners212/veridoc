@@ -87,10 +87,13 @@ export function getDemoAccountByRole(role: WorkspaceRole): DemoAccount {
 }
 
 export function isDemoLoginEnabled(): boolean {
-  if (process.env.VERCEL_ENV === "production") {
-    return false;
+  if (
+    process.env.VERCEL_ENV === "production" ||
+    process.env.NODE_ENV === "production"
+  ) {
+    return process.env.ENABLE_DEMO_LOGIN === "true";
   }
-  return process.env.NODE_ENV !== "production" || process.env.ENABLE_DEMO_LOGIN === "true";
+  return true;
 }
 
 export function getSafeCallbackUrl(raw?: string | null): string | null {
