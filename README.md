@@ -10,16 +10,17 @@ Multi-tenant **Document & SOP Approval Workspace** built for controlled authorin
 
 Captured from the live Vercel deployment ([veridoc-six.vercel.app](https://veridoc-six.vercel.app)) using the seeded **Apex Manufacturing** workspace:
 
-### Public Overview & Quality Governance Dashboard
-![VeriDoc Overview](docs/screenshots/landing-desktop.png)
-![Quality Governance Dashboard](docs/screenshots/dashboard-desktop.png)
+| Public Overview | Quality Governance Dashboard |
+| :---: | :---: |
+| ![VeriDoc Overview](docs/screenshots/landing-desktop.png) | ![Quality Governance Dashboard](docs/screenshots/dashboard-desktop.png) |
 
-### Controlled Document Library & Hash-Chained Audit Trail
-![Controlled Documents Library](docs/screenshots/documents-desktop.png)
-![Governance Audit Trail](docs/screenshots/audit-desktop.png)
+| Controlled Documents Library | Governance Audit Trail |
+| :---: | :---: |
+| ![Controlled Documents Library](docs/screenshots/documents-desktop.png) | ![Governance Audit Trail](docs/screenshots/audit-desktop.png) |
 
-### Frontline Mobile Reader PWA (`375×812`)
-<img src="docs/screenshots/reader-mobile.png" alt="Mobile Reader PWA Queue" width="320" />
+| Frontline Mobile Reader PWA (`375×812`) | Live Demo Roles ([`/auth/sign-in`](https://veridoc-six.vercel.app/auth/sign-in)) |
+| :---: | :--- |
+| <img src="docs/screenshots/reader-mobile.png" alt="Mobile Reader PWA Queue" width="200" /> | Try all 5 RBAC roles on the live deployment:<br />• **Workspace Admin** (`Sarah Jenkins`)<br />• **Quality Manager** (`Elena Rostova`)<br />• **Document Author** (`Marcus Vance`)<br />• **Approver / Reviewer** (`Dr. Rachel Vance`)<br />• **Reader** (`David Miller`) |
 
 ---
 
