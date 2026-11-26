@@ -1,0 +1,15 @@
+<svg fill="#000000" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="title"><title>VeriDoc DualCheck Logo</title>
+  <title id="title">VeriDoc DualCheck Logo (Color)</title>
+  <defs>
+    <linearGradient id="veridoc-stage1" gradientUnits="userSpaceOnUse" x1="19" y1="48" x2="180" y2="200">
+      <stop offset="0%" stop-color="#000000"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+    <linearGradient id="veridoc-stage2" gradientUnits="userSpaceOnUse" x1="149" y1="200" x2="237" y2="96">
+      <stop offset="0%" stop-color="#000000"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#veridoc-stage1)" d="M 19 60 H 63 L 107 148 L 157 48 H 201 L 125 200 H 89 Z"/>
+  <path fill="url(#veridoc-stage2)" d="M 149 200 L 201 96 H 237 L 185 200 Z"/>
+</svg>

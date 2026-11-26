@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1795420617432,
+      "tag": "0000_dark_malice",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1795420625000,
+      "tag": "0001_security_policies_and_triggers",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795420635000,
+      "tag": "0002_fix_immutability_and_state_transitions",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1795420645000,
+      "tag": "0003_user_workspaces_lookup",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1795420655000,
+      "tag": "0004_rate_limits",
+      "breakpoints": true
+    }
+  ]
+}

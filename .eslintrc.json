@@ -1,0 +1,24 @@
+{
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["@/db*", "@/db/*", "@/server/services*", "@/server/services/*", "@/server/policies*", "@/server/policies/*", "@/lib/storage*", "@/lib/storage/*", "@/lib/crypto*", "@/lib/crypto/*"],
+            "message": "Architectural boundary violation: Presentation layer (components/client routes) cannot import server, database, or cryptographic internals."
+          }
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/server/**", "src/app/api/**", "src/db/**", "src/lib/auth/**", "tests/**", "scripts/**"],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ]
+}

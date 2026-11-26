@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 280" width="360" height="280" role="img" aria-labelledby="title">
+  <title id="title">VeriDoc Stacked Logo (Color)</title>
+  <defs>
+    <linearGradient id="veridoc-s-stage1" gradientUnits="userSpaceOnUse" x1="19" y1="48" x2="180" y2="200">
+      <stop offset="0%" stop-color="#1D4ED8"/>
+      <stop offset="100%" stop-color="#4F46E5"/>
+    </linearGradient>
+    <linearGradient id="veridoc-s-stage2" gradientUnits="userSpaceOnUse" x1="149" y1="200" x2="237" y2="96">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="100%" stop-color="#0284C7"/>
+    </linearGradient>
+  </defs>
+  <g id="symbol" transform="translate(86, 0) scale(0.734)">
+    <path fill="url(#veridoc-s-stage1)" d="M 19 60 H 63 L 107 148 L 157 48 H 201 L 125 200 H 89 Z"/>
+    <path fill="url(#veridoc-s-stage2)" d="M 149 200 L 201 96 H 237 L 185 200 Z"/>
+  </g>
+  <g id="wordmark" transform="translate(33, 174) scale(0.6)">
+    <path fill="#0F172A" fill-rule="evenodd" d="M 0 0 H 19 L 40 74 L 61 0 H 80 L 49 100 H 31 Z M 158 66 A 34 36 0 1 0 153 84 L 139 77 A 18 18 0 0 1 106 68 H 158 Z M 106 56 H 142 A 18 15 0 0 0 106 56 Z M 172 28 H 188 V 41 C 192 31 201 28 214 28 V 45 C 198 45 188 53 188 70 V 100 H 172 Z M 226 0 H 244 V 17 H 226 Z M 226 28 H 244 V 100 H 226 Z"/>
+    <path fill="#1D4ED8" fill-rule="evenodd" d="M 262 0 H 294 A 46 50 0 0 1 294 100 H 262 Z M 280 16 V 84 H 294 A 30 34 0 0 0 294 16 Z M 384 28 A 34 36 0 1 1 383.9 28 Z M 384 44 A 18 20 0 1 0 384.1 44 Z M 488 46 L 474 53 A 18 20 0 1 0 474 75 L 488 82 A 34 36 0 1 1 488 46 Z"/>
+  </g>
+</svg>

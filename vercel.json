@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm build",
+  "functions": {
+    "src/app/api/documents/**/upload*/route.ts": {
+      "maxDuration": 60
+    },
+    "src/app/api/audit/export/route.ts": {
+      "maxDuration": 60
+    }
+  }
+}
