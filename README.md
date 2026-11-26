@@ -6,6 +6,23 @@ Multi-tenant **Document & SOP Approval Workspace** built for controlled authorin
 
 ---
 
+## Screenshots
+
+Captured from the live Vercel deployment ([veridoc-six.vercel.app](https://veridoc-six.vercel.app)) using the seeded **Apex Manufacturing** workspace:
+
+### Public Overview & Quality Governance Dashboard
+![VeriDoc Overview](docs/screenshots/landing-desktop.png)
+![Quality Governance Dashboard](docs/screenshots/dashboard-desktop.png)
+
+### Controlled Document Library & Hash-Chained Audit Trail
+![Controlled Documents Library](docs/screenshots/documents-desktop.png)
+![Governance Audit Trail](docs/screenshots/audit-desktop.png)
+
+### Frontline Mobile Reader PWA (`375×812`)
+<img src="docs/screenshots/reader-mobile.png" alt="Mobile Reader PWA Queue" width="320" />
+
+---
+
 ## Core Implemented Features (Slice 1)
 
 - **Controlled Authoring & Private PDF Storage**
