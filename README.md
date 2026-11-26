@@ -2,6 +2,8 @@
 
 Multi-tenant **Document & SOP Approval Workspace** built for controlled authoring, sequential review workflows, cryptographic version integrity (`SHA-256`), and frontline read acknowledgments (Slice 1 — Core Lifecycle MVP).
 
+**Live Deployment:** [veridoc-six.vercel.app](https://veridoc-six.vercel.app) *(Production build on Vercel; quick demo-role login is disabled in production by default unless `ENABLE_DEMO_LOGIN="true"` is configured).*
+
 ---
 
 ## Core Implemented Features (Slice 1)
