@@ -54,6 +54,28 @@ VeriDoc enforces a strict 5-layer boundary (`src/app` + `src/components` → `sr
 - [`docs/SECURITY.md`](docs/SECURITY.md) — Threat model, `NOBYPASSRLS`, upload validation, and sanitization controls
 - [`docs/API_SPECIFICATION.md`](docs/API_SPECIFICATION.md) — Server Actions & REST Route Handler contracts
 - [`docs/TESTING_STRATEGY.md`](docs/TESTING_STRATEGY.md) — Unit, live-PostgreSQL integration, and Playwright E2E strategy
+- [`docs/PROGRESS_TRACKER.md`](docs/PROGRESS_TRACKER.md) — Slice 1 milestone status (`M0`–`M6`) and post-M6 updates
+
+### Repository Layout
+
+```text
+├── src/
+│   ├── app/              # Next.js App Router pages, layouts, and /api/* Route Handlers
+│   ├── components/       # UI primitives, brand/motion components, and domain feature islands
+│   ├── server/
+│   │   ├── actions/      # Thin Server Actions (auth -> Zod -> policy -> service)
+│   │   ├── policies/     # Read-only RBAC and separation-of-duties guards
+│   │   ├── services/     # Transactional domain logic, locking, and audit appends
+│   │   └── security/     # PostgreSQL distributed sliding-window rate limiter
+│   ├── db/               # Drizzle client, withTenantContext() RLS wrapper, and schema/*
+│   ├── lib/              # Auth, streaming SHA-256 crypto, private Storage, and logger
+│   └── types/            # Shared domain DTOs, role/state unions, and error codes
+├── drizzle/              # SQL schema migrations, RLS policies, triggers, and rate-limit DDL
+├── tests/                # Vitest unit (tests/unit) and live-PostgreSQL integration suites
+├── e2e/                  # Playwright E2E and mobile PWA acceptance specs
+├── scripts/              # Demo workspace seeding script (seed-demo.ts)
+└── docs/                 # Engineering specifications and decision log
+```
 
 ---
 
@@ -107,9 +129,21 @@ VeriDoc enforces a strict 5-layer boundary (`src/app` + `src/components` → `sr
 | `pnpm typecheck` | Run TypeScript compiler (`tsc --noEmit`) |
 | `pnpm lint` | Run ESLint (`next lint`) |
 | `pnpm build` | Build production Next.js bundle |
+| `pnpm test` | Run all Vitest suites (`tests/unit` and `tests/integration`) |
 | `pnpm test:unit` | Run unit & UI contract tests (`vitest run tests/unit`) |
 | `pnpm test:integration` | Run live-PostgreSQL & Storage integration suite (`vitest run tests/integration`) |
 | `pnpm test:e2e` | Run Playwright E2E suite against the local app (`playwright test`) |
+
+---
+
+## CI/CD & Deployment
+
+- **GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)):**
+  - `verify` runs `typecheck`, `lint`, `test:unit`, and `build` on every push and pull request.
+  - `integration` provisions a PostgreSQL 15 service with a `NOBYPASSRLS` `veridoc_app_user` role, runs `pnpm db:migrate`, and executes `pnpm test:integration`.
+  - `e2e` runs Playwright specs on pull requests targeting `main`.
+  - `deploy-gate` runs on pushes to `main` (`environment: production`), requires `DIRECT_DATABASE_URL` in GitHub Actions `production` secrets for pre-deploy migrations, and deploys to Vercel when `VERCEL_TOKEN` (`VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`) is configured.
+- **Vercel ([`vercel.json`](vercel.json)):** Configures `pnpm build` and `60s` function `maxDuration` for PDF upload and audit export routes.
 
 ---
 
