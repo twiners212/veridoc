@@ -169,33 +169,36 @@ export async function generateAuditPacketData(
 ): Promise<AuditPacketExport> {
   const { tenantId, actorUserId, filter } = params;
 
-  // 1. Verify caller membership & RBAC, fetch profile/tenant metadata, and verify hash chain in parallel
-  const [membership, callerUserRows, tenantRows, chainVerification] =
-    await Promise.all([
-      assertActiveMembership(tx, tenantId, actorUserId),
-      tx
-        .select({ id: users.id, name: users.name, email: users.email })
-        .from(users)
-        .where(eq(users.id, actorUserId))
-        .limit(1),
-      tx
-        .select({ id: tenants.id, name: tenants.name, slug: tenants.slug })
-        .from(tenants)
-        .where(eq(tenants.id, tenantId))
-        .limit(1),
-      verifyTenantAuditChainInTx(tx, tenantId),
-    ]);
-
+  // 1. Verify caller membership & RBAC sequentially (single socket per postgres.js tx), then load tenant + user metadata and verify hash chain
+  const membership = await assertActiveMembership(tx, tenantId, actorUserId);
   assertCanExportAuditPacket(membership);
 
-  const callerUser = callerUserRows[0];
-  const tenantRecord = tenantRows[0];
+  const [actorTenantRow] = await tx
+    .select({
+      tenantId: tenants.id,
+      tenantName: tenants.name,
+      tenantSlug: tenants.slug,
+      userName: users.name,
+    })
+    .from(tenants)
+    .leftJoin(users, eq(users.id, actorUserId))
+    .where(eq(tenants.id, tenantId))
+    .limit(1);
 
-  if (!tenantRecord) {
+  if (!actorTenantRow) {
     throw new DomainError("NOT_FOUND", "Tenant not found", 404);
   }
 
-  // 2. Anti-enumeration checks & fetch matching documents and versions
+  const callerUser = actorTenantRow.userName ? { name: actorTenantRow.userName } : undefined;
+  const tenantRecord = {
+    id: actorTenantRow.tenantId,
+    name: actorTenantRow.tenantName,
+    slug: actorTenantRow.tenantSlug,
+  };
+
+  const chainVerification = await verifyTenantAuditChainInTx(tx, tenantId);
+
+  // 2. Anti-enumeration checks & fetch matching documents and versions sequentially
   let targetDocumentId = filter.documentId;
   const targetVersionId = filter.versionId;
 
@@ -234,85 +237,91 @@ export async function generateAuditPacketData(
     }
     matchingVersions = [version];
   } else if (targetDocumentId) {
-    const [docsResult, versionsResult] = await Promise.all([
-      tx
-        .select()
-        .from(documents)
-        .where(
-          and(
-            eq(documents.tenantId, tenantId),
-            eq(documents.id, targetDocumentId)
-          )
-        ),
-      tx
-        .select()
-        .from(documentVersions)
-        .where(
-          and(
-            eq(documentVersions.tenantId, tenantId),
-            eq(documentVersions.documentId, targetDocumentId)
-          )
+    const docsResult = await tx
+      .select()
+      .from(documents)
+      .where(
+        and(
+          eq(documents.tenantId, tenantId),
+          eq(documents.id, targetDocumentId)
         )
-        .orderBy(desc(documentVersions.createdAt)),
-    ]);
+      );
 
     if (docsResult.length === 0) {
       throw new DomainError("NOT_FOUND", "Requested document not found", 404);
     }
+
     matchingDocuments = docsResult;
-    matchingVersions = versionsResult;
+    matchingVersions = await tx
+      .select()
+      .from(documentVersions)
+      .where(
+        and(
+          eq(documentVersions.tenantId, tenantId),
+          eq(documentVersions.documentId, targetDocumentId)
+        )
+      )
+      .orderBy(desc(documentVersions.createdAt));
   } else {
-    const [docsResult, tenantVersions] = await Promise.all([
-      tx.select().from(documents).where(eq(documents.tenantId, tenantId)),
-      tx
+    matchingDocuments = await tx
+      .select()
+      .from(documents)
+      .where(eq(documents.tenantId, tenantId));
+
+    if (matchingDocuments.length > 0) {
+      const tenantVersions = await tx
         .select()
         .from(documentVersions)
         .where(eq(documentVersions.tenantId, tenantId))
-        .orderBy(desc(documentVersions.createdAt)),
-    ]);
-
-    matchingDocuments = docsResult;
-    const docIdSet = new Set(matchingDocuments.map((d) => d.id));
-    matchingVersions = tenantVersions.filter((v) => docIdSet.has(v.documentId));
+        .orderBy(desc(documentVersions.createdAt));
+      const docIdSet = new Set(matchingDocuments.map((d) => d.id));
+      matchingVersions = tenantVersions.filter((v) => docIdSet.has(v.documentId));
+    }
   }
 
   const versionIds = matchingVersions.map((v) => v.id);
 
-  // 3. Query approval cycles, read assignments, and read acknowledgments in parallel
-  const [allCycles, allAssignments, allAcks] =
+  // 3. Query approval cycles, read assignments, and read acknowledgments sequentially
+  const allCycles =
     versionIds.length > 0
-      ? await Promise.all([
-          tx
-            .select()
-            .from(approvalCycles)
-            .where(
-              and(
-                eq(approvalCycles.tenantId, tenantId),
-                inArray(approvalCycles.documentVersionId, versionIds)
-              )
+      ? await tx
+          .select()
+          .from(approvalCycles)
+          .where(
+            and(
+              eq(approvalCycles.tenantId, tenantId),
+              inArray(approvalCycles.documentVersionId, versionIds)
             )
-            .orderBy(approvalCycles.cycleNumber),
-          tx
-            .select()
-            .from(readAssignments)
-            .where(
-              and(
-                eq(readAssignments.tenantId, tenantId),
-                inArray(readAssignments.documentVersionId, versionIds)
-              )
-            ),
-          tx
-            .select()
-            .from(readAcknowledgments)
-            .where(
-              and(
-                eq(readAcknowledgments.tenantId, tenantId),
-                inArray(readAcknowledgments.documentVersionId, versionIds)
-              )
+          )
+          .orderBy(approvalCycles.cycleNumber)
+      : [];
+
+  const allAssignments =
+    versionIds.length > 0
+      ? await tx
+          .select()
+          .from(readAssignments)
+          .where(
+            and(
+              eq(readAssignments.tenantId, tenantId),
+              inArray(readAssignments.documentVersionId, versionIds)
             )
-            .orderBy(desc(readAcknowledgments.acknowledgedAt)),
-        ])
-      : [[], [], []];
+          )
+      : [];
+
+  const allAcks =
+    versionIds.length > 0
+      ? await tx
+          .select()
+          .from(readAcknowledgments)
+          .where(
+            and(
+              eq(readAcknowledgments.tenantId, tenantId),
+              inArray(readAcknowledgments.documentVersionId, versionIds)
+            )
+          )
+          .orderBy(desc(readAcknowledgments.acknowledgedAt))
+      : [];
 
   const cycleIds = allCycles.map((c) => c.id);
   const allSteps =
@@ -347,7 +356,7 @@ export async function generateAuditPacketData(
     allUserIds.add(a.userId);
   }
 
-  // 5. Build audit log scope conditions and fetch users + audit count + audit rows in parallel
+  // 5. Build audit log scope conditions and fetch users + audit rows sequentially
   const auditConditions = [eq(auditLogs.tenantId, tenantId)];
   if (filter.startDate) {
     auditConditions.push(gte(auditLogs.createdAt, new Date(filter.startDate)));
@@ -369,24 +378,28 @@ export async function generateAuditPacketData(
     }
   }
 
-  const [userRecords, auditCountRes, auditRows] = await Promise.all([
+  const userRecords =
     allUserIds.size > 0
-      ? tx
+      ? await tx
           .select({ id: users.id, name: users.name })
           .from(users)
           .where(inArray(users.id, Array.from(allUserIds)))
-      : Promise.resolve([]),
-    tx
-      .select({ count: count() })
-      .from(auditLogs)
-      .where(and(...auditConditions)),
-    tx
-      .select()
-      .from(auditLogs)
-      .where(and(...auditConditions))
-      .orderBy(desc(auditLogs.sequenceNumber))
-      .limit(1000),
-  ]);
+      : [];
+
+  const auditRows = await tx
+    .select()
+    .from(auditLogs)
+    .where(and(...auditConditions))
+    .orderBy(desc(auditLogs.sequenceNumber))
+    .limit(1000);
+
+  const auditCountRes =
+    auditRows.length === 1000
+      ? await tx
+          .select({ count: count() })
+          .from(auditLogs)
+          .where(and(...auditConditions))
+      : [{ count: auditRows.length }];
 
   const userMap = new Map<string, { id: string; name: string }>();
   for (const u of userRecords) {

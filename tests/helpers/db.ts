@@ -11,11 +11,11 @@ if (!appUrl || !directUrl) {
 }
 
 // Runtime client running as veridoc_app_user (NOBYPASSRLS)
-export const appClient = postgres(appUrl, { prepare: false, max: 5 });
+export const appClient = postgres(appUrl, { prepare: false, max: 2 });
 export const testAppDb = drizzle(appClient, { schema });
 
 // Admin client running as postgres (migration / fixture setup / cleanup)
-export const adminClient = postgres(directUrl, { prepare: false, max: 5 });
+export const adminClient = postgres(directUrl, { prepare: false, max: 2 });
 export const testAdminDb = drizzle(adminClient, { schema });
 
 export async function cleanupTestTenants(tenantIds: string[]) {
