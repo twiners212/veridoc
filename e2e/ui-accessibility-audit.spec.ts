@@ -16,6 +16,15 @@ async function signInAsDemoRole(
   await page.waitForURL(expectedUrl, { timeout: 30000 });
 }
 
+async function applyThemeMode(page: Page, mode: ThemeMode): Promise<void> {
+  await page.evaluate((theme) => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    window.localStorage.setItem("veridoc-theme", theme);
+    window.dispatchEvent(new CustomEvent("veridoc-theme-change"));
+  }, mode);
+  await page.waitForTimeout(50);
+}
+
 async function auditRoute(
   page: Page,
   options: {
@@ -29,32 +38,37 @@ async function auditRoute(
   await page.waitForLoadState("domcontentloaded");
   await page.waitForTimeout(450);
 
-  const axeResults = await new AxeBuilder({ page })
-    .withTags(["wcag2a", "wcag2aa"])
-    .analyze();
+  for (const mode of ["light", "dark"] as const) {
+    await applyThemeMode(page, mode);
+    const taggedLabel = `${options.routeLabel} [${mode}]`;
 
-  expect(
-    axeResults.violations,
-    `Axe WCAG 2.1 AA violations on ${options.routeLabel}: ${JSON.stringify(
-      axeResults.violations.map((v) => ({
-        id: v.id,
-        impact: v.impact,
-        description: v.description,
-        nodes: v.nodes.map((n) => n.target),
-      })),
-      null,
-      2
-    )}`
-  ).toEqual([]);
+    const axeResults = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa"])
+      .analyze();
 
-  const overflow = await page.evaluate(() => ({
-    scrollWidth: document.documentElement.scrollWidth,
-    innerWidth: window.innerWidth,
-  }));
-  expect(
-    overflow.scrollWidth,
-    `Horizontal overflow detected on ${options.routeLabel}: scrollWidth=${overflow.scrollWidth} > innerWidth=${overflow.innerWidth}`
-  ).toBeLessThanOrEqual(overflow.innerWidth);
+    expect(
+      axeResults.violations,
+      `Axe WCAG 2.1 AA violations on ${taggedLabel}: ${JSON.stringify(
+        axeResults.violations.map((v) => ({
+          id: v.id,
+          impact: v.impact,
+          description: v.description,
+          nodes: v.nodes.map((n) => n.target),
+        })),
+        null,
+        2
+      )}`
+    ).toEqual([]);
+
+    const overflow = await page.evaluate(() => ({
+      scrollWidth: document.documentElement.scrollWidth,
+      innerWidth: window.innerWidth,
+    }));
+    expect(
+      overflow.scrollWidth,
+      `Horizontal overflow detected on ${taggedLabel}: scrollWidth=${overflow.scrollWidth} > innerWidth=${overflow.innerWidth}`
+    ).toBeLessThanOrEqual(overflow.innerWidth);
+  }
 
   for (const label of options.checkRightEdgeButtons ?? []) {
     const cta = page.locator("button, a", { hasText: label }).first();
@@ -134,19 +148,12 @@ function registerA11ySuite(params: {
   label: string;
   viewport: { width: number; height: number };
   isMobile: boolean;
-  mode: ThemeMode;
 }) {
-  test.describe(`UI & A11y Audit — ${params.label} (${params.mode})`, () => {
+  test.describe(`UI & A11y Audit — ${params.label} (light & dark)`, () => {
     test.use({
       viewport: params.viewport,
       isMobile: params.isMobile,
       hasTouch: params.isMobile,
-    });
-
-    test.beforeEach(async ({ page }) => {
-      await page.addInitScript((theme) => {
-        window.localStorage.setItem("veridoc-theme", theme);
-      }, params.mode);
     });
 
     test("audits WORKSPACE_ADMIN routes, READER routes, and modal Escape handling (read-only)", async ({
@@ -160,7 +167,7 @@ function registerA11ySuite(params: {
         page.locator("h1", { hasText: "Quality Governance Dashboard" })
       ).toBeVisible();
       await auditRoute(page, {
-        routeLabel: `/dashboard [${params.label} ${params.mode}]`,
+        routeLabel: `/dashboard [${params.label}]`,
         viewportWidth: params.viewport.width,
         isMobile: params.isMobile,
         checkRightEdgeButtons: ["Audit Packet"],
@@ -171,7 +178,7 @@ function registerA11ySuite(params: {
         page.locator("h1", { hasText: "Controlled Documents" })
       ).toBeVisible();
       await auditRoute(page, {
-        routeLabel: `/documents [${params.label} ${params.mode}]`,
+        routeLabel: `/documents [${params.label}]`,
         viewportWidth: params.viewport.width,
         isMobile: params.isMobile,
         checkRightEdgeButtons: ["Workspace"],
@@ -182,7 +189,7 @@ function registerA11ySuite(params: {
       await firstDocLink.click();
       await page.waitForURL(/\/documents\/[0-9a-f-]+/i, { timeout: 15000 });
       await auditRoute(page, {
-        routeLabel: `/documents/[id] [${params.label} ${params.mode}]`,
+        routeLabel: `/documents/[id] [${params.label}]`,
         viewportWidth: params.viewport.width,
         isMobile: params.isMobile,
       });
@@ -192,7 +199,7 @@ function registerA11ySuite(params: {
         page.locator("h1", { hasText: "Approvals & Sign-Offs" })
       ).toBeVisible();
       await auditRoute(page, {
-        routeLabel: `/approvals [${params.label} ${params.mode}]`,
+        routeLabel: `/approvals [${params.label}]`,
         viewportWidth: params.viewport.width,
         isMobile: params.isMobile,
       });
@@ -202,7 +209,7 @@ function registerA11ySuite(params: {
         page.locator("h1", { hasText: "Governance Audit Trail" })
       ).toBeVisible();
       await auditRoute(page, {
-        routeLabel: `/audit [${params.label} ${params.mode}]`,
+        routeLabel: `/audit [${params.label}]`,
         viewportWidth: params.viewport.width,
         isMobile: params.isMobile,
       });
@@ -212,7 +219,7 @@ function registerA11ySuite(params: {
         page.locator("h1", { hasText: "Workspace Administration" })
       ).toBeVisible();
       await auditRoute(page, {
-        routeLabel: `/settings [${params.label} ${params.mode}]`,
+        routeLabel: `/settings [${params.label}]`,
         viewportWidth: params.viewport.width,
         isMobile: params.isMobile,
       });
@@ -248,7 +255,7 @@ function registerA11ySuite(params: {
       await signInAsDemoRole(page, "READER", /\/to-read/);
       await expect(page.locator("h1").first()).toBeVisible();
       await auditRoute(page, {
-        routeLabel: `/to-read [${params.label} ${params.mode}]`,
+        routeLabel: `/to-read [${params.label}]`,
         viewportWidth: params.viewport.width,
         isMobile: params.isMobile,
       });
@@ -258,7 +265,7 @@ function registerA11ySuite(params: {
         page.locator("h1", { hasText: "Controlled Documents" })
       ).toBeVisible();
       await auditRoute(page, {
-        routeLabel: `/documents (READER) [${params.label} ${params.mode}]`,
+        routeLabel: `/documents (READER) [${params.label}]`,
         viewportWidth: params.viewport.width,
         isMobile: params.isMobile,
         checkRightEdgeButtons: ["Workspace"],
@@ -273,7 +280,7 @@ function registerA11ySuite(params: {
         page.locator("aside[aria-label='Document Acknowledgment Bar']")
       ).toBeVisible({ timeout: 15000 });
       await auditRoute(page, {
-        routeLabel: `/read/[id] [${params.label} ${params.mode}]`,
+        routeLabel: `/read/[id] [${params.label}]`,
         viewportWidth: params.viewport.width,
         isMobile: params.isMobile,
       });
@@ -281,18 +288,14 @@ function registerA11ySuite(params: {
   });
 }
 
-for (const mode of ["light", "dark"] as const) {
-  registerA11ySuite({
-    label: "Desktop 1280x800",
-    viewport: { width: 1280, height: 800 },
-    isMobile: false,
-    mode,
-  });
+registerA11ySuite({
+  label: "Desktop 1280x800",
+  viewport: { width: 1280, height: 800 },
+  isMobile: false,
+});
 
-  registerA11ySuite({
-    label: "Mobile 375x812",
-    viewport: { width: 375, height: 812 },
-    isMobile: true,
-    mode,
-  });
-}
+registerA11ySuite({
+  label: "Mobile 375x812",
+  viewport: { width: 375, height: 812 },
+  isMobile: true,
+});
