@@ -93,7 +93,7 @@ export default async function HomePage() {
           <div className="space-y-3">
             <Badge
               variant="outline"
-              className="border-primary/30 bg-brand-gradient-subtle px-3 py-1 font-mono text-xs text-primary"
+              className="border-primary/30 bg-brand-gradient-subtle px-3 py-1 font-mono text-xs text-primary dark:text-blue-300"
             >
               Slice 1 — Core Lifecycle MVP
             </Badge>
@@ -108,12 +108,12 @@ export default async function HomePage() {
           {ctx && (
             <div className="inline-flex flex-wrap items-center justify-center gap-2.5 rounded-lg border border-border bg-card/90 px-4 py-2.5 text-xs shadow-xs backdrop-blur-sm">
               <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
-                <Building2 className="h-3.5 w-3.5 text-primary" />
+                <Building2 className="h-3.5 w-3.5 text-primary dark:text-blue-400" />
                 {ctx.tenantName}
               </span>
               <span className="text-border">•</span>
               <span className="font-medium text-foreground">{ctx.userName}</span>
-              <span className="rounded bg-primary/15 px-2 py-0.5 font-mono text-[11px] font-semibold text-primary">
+              <span className="rounded bg-primary/15 px-2 py-0.5 font-mono text-[11px] font-semibold text-primary dark:bg-blue-500/20 dark:text-blue-300">
                 {ctx.role.replace(/_/g, " ")}
               </span>
             </div>
@@ -250,7 +250,7 @@ export default async function HomePage() {
                 <Card className="flex h-full flex-col justify-between border-border bg-card/95 shadow-xs transition-shadow hover:border-primary/40 hover:shadow-md">
                   <CardHeader className="space-y-2 pb-3">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="rounded bg-brand-gradient-subtle border border-primary/20 px-2 py-0.5 font-mono text-[11px] font-semibold text-primary">
+                      <span className="rounded bg-brand-gradient-subtle border border-primary/20 px-2 py-0.5 font-mono text-[11px] font-semibold text-primary dark:text-blue-300">
                         {account.role}
                       </span>
                       <span className="font-mono text-[11px] text-muted-foreground">
@@ -268,7 +268,7 @@ export default async function HomePage() {
                     {demoLoginEnabled && (
                       <Link
                         href={`/auth/sign-in?demoRole=${account.role}`}
-                        className="inline-flex min-h-[36px] items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+                        className="inline-flex min-h-[36px] items-center gap-1.5 text-xs font-semibold text-primary dark:text-blue-400 hover:underline"
                       >
                         <span>Sign in as {account.roleLabel}</span>
                         <ArrowRight className="h-3.5 w-3.5" />
@@ -334,7 +334,7 @@ export default async function HomePage() {
 
             <GsapHoverCard data-gsap-item className="space-y-1.5 rounded-lg border border-border bg-muted/60 p-4 transition-colors hover:border-primary/40 hover:shadow-xs">
               <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                <UserCheck className="h-4 w-4 text-primary" />
+                <UserCheck className="h-4 w-4 text-primary dark:text-blue-400" />
                 <span>Separation of Duties &amp; Atomic Invalidation</span>
               </div>
               <p className="text-xs leading-5 text-muted-foreground">

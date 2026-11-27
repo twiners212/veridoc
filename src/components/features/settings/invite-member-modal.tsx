@@ -4,6 +4,7 @@ import * as React from "react";
 import { UserPlus, AlertCircle, CheckCircle2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useModalA11y } from "@/components/ui/use-modal-a11y";
 import { inviteWorkspaceMemberAction } from "@/server/actions/workspace-admin.actions";
 import type { WorkspaceRole } from "@/types/roles";
 
@@ -33,6 +34,14 @@ export function InviteMemberModal({
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [errorBanner, setErrorBanner] = React.useState<string | null>(null);
   const [is402QuotaError, setIs402QuotaError] = React.useState(false);
+  const modalRef = React.useRef<HTMLDivElement>(null);
+
+  useModalA11y({
+    isOpen,
+    onClose,
+    disabled: isSubmitting,
+    containerRef: modalRef,
+  });
 
   if (!isOpen) return null;
 
@@ -88,19 +97,27 @@ export function InviteMemberModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-in fade-in duration-150">
-      <div className="relative w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-xl space-y-4">
+      <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="invite-member-title"
+        className="relative w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-xl space-y-4"
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border pb-3">
           <div className="flex items-center space-x-2">
             <div className="p-1.5 rounded bg-primary/10 text-primary">
               <UserPlus className="h-5 w-5" />
             </div>
-            <h2 className="text-base font-semibold text-foreground">Invite Workspace Member</h2>
+            <h2 id="invite-member-title" className="text-base font-semibold text-foreground">Invite Workspace Member</h2>
           </div>
           <button
             type="button"
             onClick={onClose}
+            disabled={isSubmitting}
             className="text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Close dialog"
           >
             <X className="h-4 w-4" />
           </button>
@@ -138,10 +155,11 @@ export function InviteMemberModal({
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-3.5">
           <div>
-            <label className="block text-xs font-medium text-foreground mb-1">
+            <label htmlFor="invite-member-email" className="block text-xs font-medium text-foreground mb-1">
               Email Address <span className="text-destructive">*</span>
             </label>
             <Input
+              id="invite-member-email"
               type="email"
               required
               value={email}
@@ -152,10 +170,11 @@ export function InviteMemberModal({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-foreground mb-1">
+            <label htmlFor="invite-member-name" className="block text-xs font-medium text-foreground mb-1">
               Full Name (Optional)
             </label>
             <Input
+              id="invite-member-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -165,10 +184,11 @@ export function InviteMemberModal({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-foreground mb-1">
+            <label htmlFor="invite-member-role" className="block text-xs font-medium text-foreground mb-1">
               RBAC Role <span className="text-destructive">*</span>
             </label>
             <select
+              id="invite-member-role"
               value={role}
               onChange={(e) => setRole(e.target.value as WorkspaceRole)}
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"

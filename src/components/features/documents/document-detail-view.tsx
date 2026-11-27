@@ -323,6 +323,7 @@ export function DocumentDetailView({
               {/* Version Selector Dropdown */}
               <div className="relative inline-flex items-center">
                 <select
+                  aria-label="Select version revision"
                   value={selectedVersionId}
                   onChange={(e) => setSelectedVersionId(e.target.value)}
                   className="h-7 rounded border border-border bg-background px-2 font-mono text-xs font-semibold text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
@@ -444,7 +445,7 @@ export function DocumentDetailView({
                 type="button"
                 size="sm"
                 variant="outline"
-                className="border-amber-400 text-amber-800 hover:bg-amber-50"
+                className="border-amber-400 text-amber-800 hover:bg-amber-50 dark:border-amber-700 dark:text-amber-300 dark:hover:bg-amber-950/50"
                 onClick={() => setShowRecallModal(true)}
               >
                 <Undo2 className="h-3.5 w-3.5 mr-1" />
@@ -471,7 +472,7 @@ export function DocumentDetailView({
                 type="button"
                 size="sm"
                 variant="outline"
-                className="border-red-300 text-red-700 hover:bg-red-50 hover:text-red-800 font-medium"
+                className="border-red-300 text-red-700 hover:bg-red-50 hover:text-red-800 dark:border-red-800 dark:text-red-300 dark:hover:bg-red-950/50 dark:hover:text-red-200 font-medium"
                 onClick={() => setShowRetireModal(true)}
               >
                 <Archive className="h-3.5 w-3.5 mr-1" />
@@ -506,14 +507,14 @@ export function DocumentDetailView({
 
         {/* Signed Preview URL Banner (120s TTL, DEC-06 / REQ-FR-101) */}
         {signedPreviewUrl && (
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-lg border border-sky-300 bg-sky-50 text-sky-950">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-lg border border-sky-300 bg-sky-50 text-sky-950 dark:border-sky-800 dark:bg-sky-950/50 dark:text-sky-100">
             <div className="flex items-center gap-3">
-              <ShieldCheck className="h-5 w-5 text-sky-700 shrink-0" />
+              <ShieldCheck className="h-5 w-5 text-sky-700 dark:text-sky-400 shrink-0" />
               <div>
                 <p className="text-sm font-semibold">
                   Secure Signed Preview URL Generated (120s TTL)
                 </p>
-                <p className="text-xs text-sky-800 font-mono mt-0.5">
+                <p className="text-xs text-sky-800 dark:text-sky-300 font-mono mt-0.5">
                   Valid until: {signedUrlExpiresAt ? new Date(signedUrlExpiresAt).toLocaleTimeString() : "120s"}
                 </p>
               </div>
@@ -532,14 +533,14 @@ export function DocumentDetailView({
 
         {/* Success & Error Banners */}
         {saveSuccess && (
-          <div className="flex items-center gap-2 p-3 rounded-lg border border-emerald-300 bg-emerald-50 text-emerald-800 text-sm">
+          <div className="flex items-center gap-2 p-3 rounded-lg border border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 text-sm">
             <CheckCircle2 className="h-4 w-4 shrink-0" />
             <span>Document version saved successfully.</span>
           </div>
         )}
 
         {errorMessage && (
-          <div className="flex items-center gap-2 p-3 rounded-lg border border-destructive/30 bg-destructive/5 text-destructive text-sm">
+          <div className="flex items-center gap-2 p-3 rounded-lg border border-destructive/30 bg-destructive/5 text-destructive dark:text-red-400 text-sm">
             <AlertTriangle className="h-4 w-4 shrink-0" />
             <span>{errorMessage}</span>
           </div>
@@ -554,7 +555,7 @@ export function DocumentDetailView({
               className={cn(
                 "flex items-center gap-2 py-3 border-b-2 text-sm font-medium transition-colors",
                 activeTab === "editor"
-                  ? "border-primary text-primary font-semibold"
+                  ? "border-primary text-primary dark:border-blue-400 dark:text-blue-400 font-semibold"
                   : "border-transparent text-muted-foreground hover:text-foreground"
               )}
             >
@@ -568,7 +569,7 @@ export function DocumentDetailView({
               className={cn(
                 "flex items-center gap-2 py-3 border-b-2 text-sm font-medium transition-colors",
                 activeTab === "pdf"
-                  ? "border-primary text-primary font-semibold"
+                  ? "border-primary text-primary dark:border-blue-400 dark:text-blue-400 font-semibold"
                   : "border-transparent text-muted-foreground hover:text-foreground"
               )}
             >
@@ -582,7 +583,7 @@ export function DocumentDetailView({
               className={cn(
                 "flex items-center gap-2 py-3 border-b-2 text-sm font-medium transition-colors",
                 activeTab === "diff"
-                  ? "border-primary text-primary font-semibold"
+                  ? "border-primary text-primary dark:border-blue-400 dark:text-blue-400 font-semibold"
                   : "border-transparent text-muted-foreground hover:text-foreground"
               )}
             >
@@ -596,7 +597,7 @@ export function DocumentDetailView({
               className={cn(
                 "flex items-center gap-2 py-3 border-b-2 text-sm font-medium transition-colors",
                 activeTab === "metadata"
-                  ? "border-primary text-primary font-semibold"
+                  ? "border-primary text-primary dark:border-blue-400 dark:text-blue-400 font-semibold"
                   : "border-transparent text-muted-foreground hover:text-foreground"
               )}
             >

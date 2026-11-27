@@ -48,7 +48,7 @@ export function SequentialStepper({
           Sequential Approval Pipeline (Stage {activeStepOrder || 1} of{" "}
           {steps.length} Active)
         </span>
-        <span className="font-mono text-xs text-emerald-700 font-medium flex items-center gap-1.5">
+        <span className="font-mono text-xs text-emerald-700 dark:text-emerald-400 font-medium flex items-center gap-1.5">
           <Lock className="h-3 w-3" /> Cryptographically Enforced Sequence
         </span>
       </div>
@@ -81,18 +81,18 @@ export function SequentialStepper({
           let containerStyle =
             "p-3.5 rounded-lg border flex flex-col justify-between transition-all ";
           if (isCompleted) {
-            containerStyle += "border-emerald-200 bg-emerald-50/40";
+            containerStyle += "border-emerald-200 bg-emerald-50/40 dark:border-emerald-800/70 dark:bg-emerald-950/30";
           } else if (isRejected) {
-            containerStyle += "border-red-200 bg-red-50/40";
+            containerStyle += "border-red-200 bg-red-50/40 dark:border-red-800/70 dark:bg-red-950/30";
           } else if (isActive) {
             containerStyle += isBlocked
-              ? "border-amber-300 bg-amber-50/50 shadow-sm"
-              : "border-2 border-primary bg-blue-50/30 shadow-sm";
+              ? "border-amber-300 bg-amber-50/50 dark:border-amber-700/80 dark:bg-amber-950/30 shadow-sm"
+              : "border-2 border-primary bg-blue-50/30 dark:bg-blue-950/25 shadow-sm";
           } else if (isInvalidated) {
-            containerStyle += "border-border bg-muted/20 opacity-60";
+            containerStyle += "border-border bg-muted/20";
           } else {
             // Waiting
-            containerStyle += "border-border bg-muted/30 opacity-75";
+            containerStyle += "border-border bg-muted/30";
           }
 
           return (
@@ -132,13 +132,13 @@ export function SequentialStepper({
                       className={cn(
                         "font-mono text-xs uppercase font-semibold",
                         isCompleted
-                          ? "text-emerald-700"
+                          ? "text-emerald-700 dark:text-emerald-400"
                           : isRejected
-                          ? "text-destructive"
+                          ? "text-destructive dark:text-red-400"
                           : isActive
                           ? isBlocked
-                            ? "text-amber-800"
-                            : "text-primary tracking-wide"
+                            ? "text-amber-800 dark:text-amber-300"
+                            : "text-primary dark:text-blue-400 tracking-wide"
                           : "text-muted-foreground"
                       )}
                     >
@@ -160,7 +160,7 @@ export function SequentialStepper({
                   {step.overriddenFromApproverId && (
                     <Badge
                       variant="outline"
-                      className="text-[10px] px-1 py-0 border-amber-300 text-amber-800"
+                      className="text-[10px] px-1 py-0 border-amber-300 text-amber-800 dark:border-amber-700 dark:text-amber-300"
                     >
                       Overridden
                     </Badge>
@@ -178,7 +178,7 @@ export function SequentialStepper({
                     className={cn(
                       "text-xs truncate",
                       isActive && isAssignedToMe
-                        ? "text-primary font-medium"
+                        ? "text-primary dark:text-blue-400 font-medium"
                         : "text-muted-foreground"
                     )}
                   >
@@ -189,8 +189,8 @@ export function SequentialStepper({
 
                 {/* Inactive approver alert badge (BR-APP-04) */}
                 {isBlocked && (
-                  <div className="mt-2 p-2 rounded bg-amber-100/80 border border-amber-300 flex items-start gap-1.5 text-[11px] text-amber-900">
-                    <UserX className="h-3.5 w-3.5 shrink-0 mt-0.5 text-amber-700" />
+                  <div className="mt-2 p-2 rounded bg-amber-100/80 border border-amber-300 dark:bg-amber-950/60 dark:border-amber-800 flex items-start gap-1.5 text-[11px] text-amber-900 dark:text-amber-200">
+                    <UserX className="h-3.5 w-3.5 shrink-0 mt-0.5 text-amber-700 dark:text-amber-400" />
                     <div className="min-w-0">
                       <span className="font-semibold block">
                         BLOCKED_INACTIVE_APPROVER
@@ -216,7 +216,7 @@ export function SequentialStepper({
                           }) + " UTC"
                         : "Signed"}
                     </span>
-                    <span className="text-emerald-700 font-medium">Digest Bound</span>
+                    <span className="text-emerald-700 dark:text-emerald-400 font-medium">Digest Bound</span>
                   </>
                 ) : isRejected ? (
                   <>
@@ -231,11 +231,11 @@ export function SequentialStepper({
                           }) + " UTC"
                         : "Rejected"}
                     </span>
-                    <span className="text-destructive font-medium">Cycle Reset</span>
+                    <span className="text-destructive dark:text-red-400 font-medium">Cycle Reset</span>
                   </>
                 ) : isActive ? (
                   <div className="w-full flex items-center justify-between gap-1">
-                    <span className="text-primary font-semibold">
+                    <span className="text-primary dark:text-blue-400 font-semibold">
                       {isAssignedToMe ? "Action Required" : "Pending Sign-Off"}
                     </span>
                     {canAdminOverride ? (
@@ -243,7 +243,7 @@ export function SequentialStepper({
                         type="button"
                         size="sm"
                         variant="outline"
-                        className="h-6 px-2 text-[10px] bg-background text-amber-800 border-amber-300 hover:bg-amber-100"
+                        className="h-6 px-2 text-[10px] bg-background text-amber-800 border-amber-300 hover:bg-amber-100 dark:text-amber-300 dark:border-amber-700 dark:hover:bg-amber-950/50"
                         onClick={() => onAdminOverrideClick?.(step)}
                         data-testid={`admin-override-trigger-step-${step.stepOrder}`}
                       >
@@ -251,7 +251,7 @@ export function SequentialStepper({
                         Override Approver
                       </Button>
                     ) : (
-                      <span className="flex items-center gap-1 text-primary">
+                      <span className="flex items-center gap-1 text-primary dark:text-blue-400">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
                         In Queue
                       </span>

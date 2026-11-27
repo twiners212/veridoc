@@ -1,6 +1,7 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "@/db/schema";
+import { queryClient } from "@/db";
 
 const appUrl = process.env.DATABASE_URL;
 const directUrl = process.env.DIRECT_DATABASE_URL || process.env.DATABASE_URL;
@@ -10,11 +11,11 @@ if (!appUrl || !directUrl) {
 }
 
 // Runtime client running as veridoc_app_user (NOBYPASSRLS)
-export const appClient = postgres(appUrl, { prepare: false, max: 5 });
+export const appClient = postgres(appUrl, { prepare: false, max: 2 });
 export const testAppDb = drizzle(appClient, { schema });
 
 // Admin client running as postgres (migration / fixture setup / cleanup)
-export const adminClient = postgres(directUrl, { prepare: false, max: 5 });
+export const adminClient = postgres(directUrl, { prepare: false, max: 2 });
 export const testAdminDb = drizzle(adminClient, { schema });
 
 export async function cleanupTestTenants(tenantIds: string[]) {
@@ -52,4 +53,15 @@ export async function cleanupTestUsers(userIds: string[]) {
   } catch (e) {
     // Ignore cleanup errors
   }
+}
+
+/**
+ * Closes all PostgreSQL client pools used by integration tests.
+ */
+export async function closeTestDbClients() {
+  await Promise.allSettled([
+    appClient.end({ timeout: 5 }),
+    adminClient.end({ timeout: 5 }),
+    queryClient.end({ timeout: 5 }),
+  ]);
 }

@@ -145,6 +145,7 @@ export function ActiveRolloutsTable({
 
           {/* Group Filter */}
           <select
+            aria-label="Filter by target audience group"
             value={selectedGroup}
             onChange={(e) => setSelectedGroup(e.target.value)}
             className="bg-muted/50 border border-border text-foreground text-xs rounded px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
@@ -160,6 +161,7 @@ export function ActiveRolloutsTable({
 
           {/* Lifecycle Filter */}
           <select
+            aria-label="Filter by lifecycle state"
             value={selectedState}
             onChange={(e) => setSelectedState(e.target.value)}
             className="bg-muted/50 border border-border text-foreground text-xs rounded px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
@@ -190,7 +192,7 @@ export function ActiveRolloutsTable({
               className={cn(
                 "px-2.5 py-1 text-xs font-medium rounded transition-colors flex items-center gap-1",
                 activeTab === "overdue"
-                  ? "bg-amber-100 text-amber-900 shadow-xs"
+                  ? "bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-200 shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -203,7 +205,7 @@ export function ActiveRolloutsTable({
               className={cn(
                 "px-2.5 py-1 text-xs font-medium rounded transition-colors",
                 activeTab === "completed"
-                  ? "bg-emerald-100 text-emerald-900 shadow-xs"
+                  ? "bg-emerald-100 text-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-200 shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -214,19 +216,19 @@ export function ActiveRolloutsTable({
       </div>
 
       {/* Compliance Table Container */}
-      <div className="bg-card rounded-lg border border-border shadow-xs overflow-hidden">
+      <div className="bg-card rounded-lg border border-border shadow-xs overflow-hidden min-w-0">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-muted/60 text-muted-foreground text-[11px] font-mono uppercase tracking-wider border-b border-border">
-                <th className="py-3 px-4 font-semibold">Document Code</th>
-                <th className="py-3 px-4 font-semibold">Document Title</th>
-                <th className="py-3 px-3 font-semibold">Ver</th>
-                <th className="py-3 px-3 font-semibold">Lifecycle State</th>
-                <th className="py-3 px-4 font-semibold">Target Audience</th>
-                <th className="py-3 px-4 min-w-[150px] font-semibold">Read Completion</th>
-                <th className="py-3 px-3 font-semibold">Status / Due</th>
-                <th className="py-3 px-4 text-right font-semibold">Actions</th>
+                <th className="py-3 px-2.5 2xl:px-4 font-semibold">Document Code</th>
+                <th className="py-3 px-2.5 2xl:px-4 font-semibold">Document Title</th>
+                <th className="hidden 2xl:table-cell py-3 px-3 font-semibold">Ver</th>
+                <th className="hidden 2xl:table-cell py-3 px-3 font-semibold">Lifecycle State</th>
+                <th className="hidden 2xl:table-cell py-3 px-4 font-semibold">Target Audience</th>
+                <th className="py-3 px-2.5 2xl:px-4 min-w-[110px] 2xl:min-w-[150px] font-semibold">Read Completion</th>
+                <th className="py-3 px-2.5 2xl:px-3 font-semibold">Status / Due</th>
+                <th className="py-3 px-2.5 2xl:px-4 text-right font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border text-xs">
@@ -247,11 +249,11 @@ export function ActiveRolloutsTable({
                       key={row.versionId || row.documentId}
                       className={cn(
                         "hover:bg-muted/40 transition-colors group",
-                        isLow && "bg-red-50/30"
+                        isLow && "bg-red-50/30 dark:bg-red-950/20"
                       )}
                     >
                       {/* Document Code */}
-                      <td className="py-3.5 px-4 font-mono font-bold text-foreground whitespace-nowrap">
+                      <td className="py-3 px-2.5 2xl:px-4 font-mono font-bold text-foreground whitespace-nowrap">
                         <Link
                           href={`/documents/${row.documentId}`}
                           className="px-2 py-1 rounded bg-muted hover:bg-muted/80 text-foreground transition-colors inline-block"
@@ -261,40 +263,49 @@ export function ActiveRolloutsTable({
                       </td>
 
                       {/* Document Title */}
-                      <td className="py-3.5 px-4">
-                        <div className="flex flex-col min-w-[200px]">
+                      <td className="py-3 px-2.5 2xl:px-4 min-w-0 max-w-[200px] 2xl:max-w-[260px]">
+                        <div className="flex flex-col min-w-0">
                           <Link
                             href={`/documents/${row.documentId}`}
-                            className="font-medium text-foreground hover:text-primary transition-colors line-clamp-1"
+                            className="font-medium text-foreground hover:text-primary dark:hover:text-blue-400 transition-colors line-clamp-1"
                           >
                             {row.title}
                           </Link>
-                          <div className="flex items-center gap-1.5 mt-0.5 font-mono text-[10px] text-muted-foreground">
+                          <div className="flex flex-wrap items-center gap-1.5 mt-0.5 font-mono text-[10px] text-muted-foreground">
+                            <span className="2xl:hidden font-semibold text-foreground/80">
+                              {row.versionLabel}
+                            </span>
+                            {row.targetAudienceGroupNames[0] && (
+                              <span className="2xl:hidden truncate max-w-[120px]">
+                                • {row.targetAudienceGroupNames[0]}
+                              </span>
+                            )}
                             {row.documentSha256 && (
-                              <span>SHA: {row.documentSha256.slice(0, 8)}…{row.documentSha256.slice(-4)}</span>
+                              <span className="hidden sm:inline">
+                                SHA: {row.documentSha256.slice(0, 6)}…{row.documentSha256.slice(-4)}
+                              </span>
                             )}
                             {row.facilityLocation && (
-                              <>
-                                <span>•</span>
-                                <span>{row.facilityLocation}</span>
-                              </>
+                              <span className="hidden 2xl:inline">
+                                • {row.facilityLocation}
+                              </span>
                             )}
                           </div>
                         </div>
                       </td>
 
                       {/* Version Label */}
-                      <td className="py-3.5 px-3 whitespace-nowrap font-mono text-muted-foreground font-semibold">
+                      <td className="hidden 2xl:table-cell py-3 px-3 whitespace-nowrap font-mono text-muted-foreground font-semibold">
                         {row.versionLabel}
                       </td>
 
                       {/* Lifecycle State */}
-                      <td className="py-3.5 px-3 whitespace-nowrap">
+                      <td className="hidden 2xl:table-cell py-3 px-3 whitespace-nowrap">
                         <LifecycleStatusBadge state={row.lifecycleState} size="sm" />
                       </td>
 
                       {/* Target Audience Groups */}
-                      <td className="py-3.5 px-4">
+                      <td className="hidden 2xl:table-cell py-3 px-4">
                         <div className="flex flex-wrap gap-1">
                           {row.targetAudienceGroupNames.map((g) => (
                             <span
@@ -308,7 +319,7 @@ export function ActiveRolloutsTable({
                       </td>
 
                       {/* Read Completion Progress */}
-                      <td className="py-3.5 px-4">
+                      <td className="py-3 px-2.5 2xl:px-4">
                         <div className="space-y-1">
                           <div className="flex justify-between font-mono text-[11px] text-muted-foreground">
                             <span>
@@ -317,8 +328,8 @@ export function ActiveRolloutsTable({
                             <span
                               className={cn(
                                 "font-semibold",
-                                is100 && "text-emerald-700",
-                                isLow && "text-destructive",
+                                is100 && "text-emerald-700 dark:text-emerald-400",
+                                isLow && "text-destructive dark:text-red-400",
                                 !is100 && !isLow && "text-foreground"
                               )}
                             >
@@ -340,14 +351,14 @@ export function ActiveRolloutsTable({
                       </td>
 
                       {/* Status / Overdue Badge */}
-                      <td className="py-3.5 px-3 whitespace-nowrap">
+                      <td className="py-3 px-2.5 2xl:px-3 whitespace-nowrap">
                         {row.overdueCount > 0 ? (
-                          <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-red-100 text-red-800 border border-red-200 inline-flex items-center gap-1">
+                          <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-red-100 text-red-800 border border-red-200 dark:bg-red-950/50 dark:text-red-300 dark:border-red-800 inline-flex items-center gap-1">
                             <AlertCircle className="h-3 w-3" />
                             <span>{row.overdueCount} overdue</span>
                           </span>
                         ) : is100 ? (
-                          <span className="text-[11px] font-semibold text-emerald-700 inline-flex items-center gap-1">
+                          <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 inline-flex items-center gap-1">
                             <CheckCircle2 className="h-3 w-3" />
                             <span>Completed</span>
                           </span>
@@ -360,12 +371,12 @@ export function ActiveRolloutsTable({
                       </td>
 
                       {/* Action CTAs */}
-                      <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                      <td className="py-3 px-2.5 2xl:px-4 text-right whitespace-nowrap">
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
-                          className="h-7 text-xs font-medium gap-1"
+                          className="h-7 px-2.5 text-xs font-medium gap-1"
                           onClick={() => onExportAuditPacket?.(row)}
                         >
                           <FileDown className="h-3 w-3 text-muted-foreground" />
@@ -402,16 +413,16 @@ export function ActiveRolloutsTable({
 
       {/* Frontline Escalation Banner (Visual Enrichment if any SOP is critical) */}
       {criticalOverdueItem && (
-        <div className="bg-card p-4 rounded-lg border border-red-200 bg-red-50/40 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="bg-card p-4 rounded-lg border border-red-200 dark:border-red-900 bg-red-50/40 dark:bg-red-950/30 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-start gap-3">
-            <div className="w-9 h-9 rounded-lg bg-red-100 border border-red-200 text-red-700 flex items-center justify-center shrink-0 mt-0.5">
+            <div className="w-9 h-9 rounded-lg bg-red-100 dark:bg-red-950/60 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 flex items-center justify-center shrink-0 mt-0.5">
               <ShieldAlert className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-xs font-semibold text-red-900">
+              <h3 className="text-xs font-semibold text-red-900 dark:text-red-200">
                 Escalation Threshold Triggered for {criticalOverdueItem.documentCode}
               </h3>
-              <p className="text-xs text-red-800 mt-0.5">
+              <p className="text-xs text-red-800 dark:text-red-300 mt-0.5">
                 {criticalOverdueItem.targetAudienceGroupNames.join(", ")} completion is at{" "}
                 {criticalOverdueItem.completionPercent.toFixed(0)}% (&lt;85% required threshold).{" "}
                 {criticalOverdueItem.overdueCount} personnel are overdue. Automatic shift-gate suspension will engage in 18 hours.
@@ -423,7 +434,7 @@ export function ActiveRolloutsTable({
               type="button"
               variant="outline"
               size="sm"
-              className="bg-red-100 hover:bg-red-200 text-red-900 border-red-300 text-xs gap-1"
+              className="bg-red-100 hover:bg-red-200 text-red-900 border-red-300 dark:bg-red-950/60 dark:hover:bg-red-900/60 dark:text-red-200 dark:border-red-800 text-xs gap-1"
               onClick={() => alert(`Broadcast notice dispatched to ${criticalOverdueItem.targetAudienceGroupNames.join(", ")} supervisors.`)}
             >
               <Megaphone className="h-3.5 w-3.5" />

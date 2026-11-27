@@ -18,7 +18,7 @@ const connectionString = process.env.DATABASE_URL || "";
 export const queryClient = postgres(connectionString, {
   prepare: false, // Critical for Supavisor/PgBouncer transaction mode
   max: Number(process.env.DB_POOL_MAX ?? 5),
-  connect_timeout: 10,
+  connect_timeout: 30,
   idle_timeout: 20,
   max_lifetime: 1800,
 });

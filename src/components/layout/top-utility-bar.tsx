@@ -19,7 +19,7 @@ export function TopUtilityBar({
   role,
 }: TopUtilityBarProps) {
   return (
-    <header className="sticky top-0 z-30 flex h-14 w-full items-center justify-between border-b border-border/80 bg-white/80 dark:bg-slate-950/80 px-4 backdrop-blur-md sm:px-6 relative">
+    <header className="sticky top-0 z-30 hidden lg:flex h-14 w-full items-center justify-between border-b border-border/80 bg-white/80 dark:bg-slate-950/80 px-4 backdrop-blur-md sm:px-6">
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[1.5px] bg-gradient-to-r from-blue-600/40 via-indigo-500/35 to-sky-500/30" />
       <nav aria-label="Breadcrumb" className="flex items-center space-x-2 text-sm text-muted-foreground">
         {breadcrumbs.map((crumb, idx) => (
@@ -42,7 +42,7 @@ export function TopUtilityBar({
       <div className="flex items-center space-x-2.5 sm:space-x-3">
         <ThemeToggle />
         {role && (
-          <span className="hidden sm:inline-flex items-center rounded-full bg-brand-gradient-subtle border border-primary/20 px-2.5 py-0.5 text-xs font-medium text-primary">
+          <span className="hidden sm:inline-flex items-center rounded-full bg-brand-gradient-subtle border border-primary/20 px-2.5 py-0.5 text-xs font-medium text-primary dark:text-blue-300">
             {role.replace(/_/g, " ")}
           </span>
         )}

@@ -210,7 +210,7 @@ export function ApprovalsView({
               <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans">
                 Approvals &amp; Sign-Offs
               </h1>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-mono bg-blue-100 text-primary font-semibold">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-mono bg-blue-100 text-primary dark:bg-blue-950/60 dark:text-blue-300 font-semibold">
                 <Shield className="h-3 w-3" />
                 BR-APP-01 Enforced
               </span>
@@ -250,7 +250,7 @@ export function ApprovalsView({
               className={cn(
                 "flex items-center gap-2 px-4 py-1.5 rounded text-xs font-semibold transition-all",
                 scope === "active"
-                  ? "bg-card text-primary shadow-sm"
+                  ? "bg-card text-primary dark:text-blue-400 shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               )}
               data-testid="tab-action-required"
@@ -279,7 +279,7 @@ export function ApprovalsView({
               className={cn(
                 "flex items-center gap-2 px-4 py-1.5 rounded text-xs font-semibold transition-all",
                 scope === "upcoming"
-                  ? "bg-card text-primary shadow-sm"
+                  ? "bg-card text-primary dark:text-blue-400 shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               )}
               data-testid="tab-upcoming-steps"
@@ -334,12 +334,12 @@ export function ApprovalsView({
             <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground font-semibold">
               Pending Signature Matrix ({sortedItems.length})
             </span>
-            {isLoading && <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />}
+            {isLoading && <Loader2 className="h-3.5 w-3.5 animate-spin text-primary dark:text-blue-400" />}
           </div>
 
           {sortedItems.length === 0 ? (
             <div className="p-8 text-center border border-dashed border-border rounded-lg bg-card space-y-2">
-              <CheckCircle2 className="h-8 w-8 text-emerald-600 mx-auto" />
+              <CheckCircle2 className="h-8 w-8 text-emerald-600 dark:text-emerald-400 mx-auto" />
               <p className="text-sm font-semibold text-foreground">
                 Queue Clear
               </p>
@@ -371,7 +371,7 @@ export function ApprovalsView({
 
                     <div className="flex items-center justify-between mb-1.5 pl-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs font-bold text-primary tracking-tight">
+                        <span className="font-mono text-xs font-bold text-primary dark:text-blue-400 tracking-tight">
                           {item.documentCode}
                         </span>
                         <span className="px-1.5 py-0.5 rounded font-mono text-[10px] bg-muted text-foreground font-semibold">
@@ -401,7 +401,7 @@ export function ApprovalsView({
                     </p>
 
                     <div className="mt-3 pt-2.5 border-t border-border flex items-center justify-between text-[11px] font-mono text-muted-foreground pl-1">
-                      <span className="flex items-center gap-1 text-primary font-medium">
+                      <span className="flex items-center gap-1 text-primary dark:text-blue-400 font-medium">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
                         Step {item.stepOrder} of {item.totalSteps} •{" "}
                         {item.assignedApproverRole
@@ -414,8 +414,8 @@ export function ApprovalsView({
                     </div>
 
                     {item.isBlockedInactiveApprover && (
-                      <div className="mt-2 p-1.5 rounded bg-amber-50 border border-amber-200 text-amber-900 text-[10px] font-semibold flex items-center gap-1">
-                        <AlertTriangle className="h-3 w-3 text-amber-600" />
+                      <div className="mt-2 p-1.5 rounded bg-amber-50 border border-amber-200 text-amber-900 dark:bg-amber-950/50 dark:border-amber-800 dark:text-amber-200 text-[10px] font-semibold flex items-center gap-1">
+                        <AlertTriangle className="h-3 w-3 text-amber-600 dark:text-amber-400" />
                         <span>BLOCKED_INACTIVE_APPROVER</span>
                       </div>
                     )}
@@ -434,7 +434,7 @@ export function ApprovalsView({
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono text-sm font-bold text-primary tracking-wide">
+                    <span className="font-mono text-sm font-bold text-primary dark:text-blue-400 tracking-wide">
                       {selectedItem.documentCode}
                     </span>
                     <span className="px-2 py-0.5 rounded font-mono text-xs bg-muted text-foreground font-semibold">
@@ -466,7 +466,7 @@ export function ApprovalsView({
                       </strong>
                     </span>
                     <span>•</span>
-                    <span className="text-emerald-700 font-medium flex items-center gap-1">
+                    <span className="text-emerald-700 dark:text-emerald-400 font-medium flex items-center gap-1">
                       <Lock className="h-3 w-3" /> Effective Upon Final Sign-off
                     </span>
                   </div>
@@ -511,11 +511,11 @@ export function ApprovalsView({
             {/* Diff / Digest Summary Notice Bar */}
             <div className="px-6 py-2.5 bg-muted/30 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between text-xs gap-2">
               <div className="flex items-center gap-2">
-                <FileCheck className="h-4 w-4 text-primary" />
+                <FileCheck className="h-4 w-4 text-primary dark:text-blue-400" />
                 <span className="text-foreground font-medium">
                   Controlled Content Format:
                 </span>
-                <span className="font-mono font-bold text-primary">
+                <span className="font-mono font-bold text-primary dark:text-blue-400">
                   {selectedItem.contentFormat}
                 </span>
                 <span className="text-muted-foreground">
@@ -531,7 +531,12 @@ export function ApprovalsView({
             </div>
 
             {/* Scrollable Document Preview Body */}
-            <div className="p-6 lg:p-8 overflow-y-auto max-h-[580px] space-y-6 bg-card">
+            <div
+              tabIndex={0}
+              role="region"
+              aria-label="Document preview"
+              className="p-6 lg:p-8 overflow-y-auto max-h-[580px] space-y-6 bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+            >
               {/* Metadata Grid */}
               <div className="border border-border rounded-lg overflow-hidden bg-muted/20">
                 <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-border text-xs">
@@ -563,7 +568,7 @@ export function ApprovalsView({
                     <span className="text-muted-foreground block text-[11px]">
                       Lifecycle State
                     </span>
-                    <span className="font-medium text-amber-700">
+                    <span className="font-medium text-amber-700 dark:text-amber-300">
                       {selectedItem.lifecycleState}
                     </span>
                   </div>
@@ -633,7 +638,7 @@ export function ApprovalsView({
                 </div>
               ) : (
                 <div className="p-8 border border-border rounded-lg bg-muted/20 text-center space-y-3">
-                  <FileText className="h-10 w-10 text-primary mx-auto" />
+                  <FileText className="h-10 w-10 text-primary dark:text-blue-400 mx-auto" />
                   <div>
                     <h4 className="text-sm font-semibold text-foreground">
                       Controlled PDF Document Attachment
@@ -689,7 +694,7 @@ export function ApprovalsView({
             {/* Sticky Action Bottom Bar (Master Review Controls) */}
             <div className="p-4 px-6 bg-card border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 mt-auto">
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Lock className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                <Lock className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                 <span>
                   Sign-off binds your authenticated identity to payload digest{" "}
                   <span className="font-mono text-foreground font-semibold">
@@ -708,7 +713,7 @@ export function ApprovalsView({
                   onClick={() =>
                     setReauthModalState({ isOpen: true, decision: "REJECT" })
                   }
-                  className="border-destructive text-destructive hover:bg-destructive/10 text-xs font-semibold"
+                  className="border-destructive text-destructive hover:bg-destructive/10 dark:border-red-500/60 dark:text-red-400 dark:hover:bg-red-950/40 text-xs font-semibold"
                   data-testid="reject-workflow-button"
                 >
                   <XCircle className="h-3.5 w-3.5 mr-1.5" />

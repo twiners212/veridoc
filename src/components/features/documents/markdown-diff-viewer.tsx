@@ -127,7 +127,7 @@ export function MarkdownDiffViewer({
       {/* Header & Version Selectors */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-3">
         <div className="flex items-center gap-2">
-          <GitCompare className="h-5 w-5 text-primary" />
+          <GitCompare className="h-5 w-5 text-primary dark:text-blue-400" />
           <h3 className="text-base font-semibold text-foreground">Markdown Revision Diff</h3>
           <span className="text-xs text-muted-foreground font-mono">(DEC-05)</span>
         </div>
@@ -136,6 +136,7 @@ export function MarkdownDiffViewer({
           <div className="flex flex-wrap items-center gap-2 text-xs">
             <span className="text-muted-foreground">Compare:</span>
             <select
+              aria-label="Select base version"
               value={baseId}
               onChange={(e) => setBaseId(e.target.value)}
               className="rounded border border-border bg-background px-2 py-1 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
@@ -153,6 +154,7 @@ export function MarkdownDiffViewer({
             <span className="text-muted-foreground">→</span>
 
             <select
+              aria-label="Select target version"
               value={targetId}
               onChange={(e) => setTargetId(e.target.value)}
               className="rounded border border-border bg-background px-2 py-1 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
@@ -183,25 +185,25 @@ export function MarkdownDiffViewer({
       {/* Loading State */}
       {isLoading && (
         <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
-          <Loader2 className="h-6 w-6 animate-spin text-primary mb-2" />
+          <Loader2 className="h-6 w-6 animate-spin text-primary dark:text-blue-400 mb-2" />
           <p className="text-sm">Computing line-by-line textual diff...</p>
         </div>
       )}
 
       {/* 422 UNSUPPORTED_DIFF_FORMAT Banner (DEC-05) */}
       {!isLoading && errorStatus === 422 && (
-        <div className="rounded-lg border border-sky-200 bg-sky-50/70 p-5 text-sky-900">
+        <div className="rounded-lg border border-sky-200 bg-sky-50/70 p-5 text-sky-900 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-200">
           <div className="flex items-start gap-3">
-            <Info className="h-5 w-5 text-sky-700 shrink-0 mt-0.5" />
+            <Info className="h-5 w-5 text-sky-700 dark:text-sky-400 shrink-0 mt-0.5" />
             <div className="space-y-1">
-              <h4 className="text-sm font-semibold text-sky-900">
+              <h4 className="text-sm font-semibold text-sky-900 dark:text-sky-100">
                 PDF Diffing Deferred to Slice 2 (DEC-05)
               </h4>
-              <p className="text-xs text-sky-800 leading-relaxed">
+              <p className="text-xs text-sky-800 dark:text-sky-300 leading-relaxed">
                 One or both of the compared document revisions has a PDF binary attachment. Visual
                 side-by-side and PDF diffing is scheduled for a future slice.
               </p>
-              <p className="text-xs text-sky-800 mt-2">
+              <p className="text-xs text-sky-800 dark:text-sky-300 mt-2">
                 Textual line diffing is supported exclusively on Markdown SOP revisions.
               </p>
             </div>
@@ -211,7 +213,7 @@ export function MarkdownDiffViewer({
 
       {/* Generic Error Banner */}
       {!isLoading && errorStatus && errorStatus !== 422 && errorMessage && (
-        <div className="flex items-start gap-2.5 p-3 rounded-lg border border-destructive/30 bg-destructive/5 text-destructive text-sm">
+        <div className="flex items-start gap-2.5 p-3 rounded-lg border border-destructive/30 bg-destructive/5 text-destructive dark:text-red-400 text-sm">
           <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
           <div className="flex-1">{errorMessage}</div>
         </div>
@@ -222,11 +224,11 @@ export function MarkdownDiffViewer({
         <div className="space-y-3">
           {/* Summary Badges */}
           <div className="flex items-center gap-3 text-xs font-mono">
-            <span className="inline-flex items-center gap-1 rounded bg-emerald-100 text-emerald-800 px-2 py-0.5 font-semibold">
+            <span className="inline-flex items-center gap-1 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 px-2 py-0.5 font-semibold">
               <Plus className="h-3 w-3" />
               {diffData.additions ?? 0} additions
             </span>
-            <span className="inline-flex items-center gap-1 rounded bg-rose-100 text-rose-800 px-2 py-0.5 font-semibold">
+            <span className="inline-flex items-center gap-1 rounded bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 px-2 py-0.5 font-semibold">
               <Minus className="h-3 w-3" />
               {diffData.deletions ?? 0} deletions
             </span>

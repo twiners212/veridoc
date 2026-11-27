@@ -80,41 +80,43 @@ export function Sha256DigestChip({
 
   return (
     <div className="relative inline-flex items-center" ref={popoverRef}>
-      <button
-        type="button"
-        onClick={() => setPopoverOpen((prev) => !prev)}
+      <div
         className={cn(
-          "group inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-mono bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary",
+          "inline-flex items-center rounded border border-border bg-muted/60 text-xs font-mono text-foreground",
           className
         )}
-        title="Click to view full SHA-256 payload digest"
-        aria-expanded={popoverOpen}
       >
-        {showIcon && (
-          <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 shrink-0" aria-hidden="true" />
-        )}
-        <span className="font-semibold text-slate-800 tracking-tight">{truncated}</span>
-        <span
-          role="button"
-          tabIndex={0}
+        <button
+          type="button"
+          onClick={() => setPopoverOpen((prev) => !prev)}
+          className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-l hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
+          title="Click to view full SHA-256 payload digest"
+          aria-expanded={popoverOpen}
+        >
+          {showIcon && (
+            <ShieldCheck
+              className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0"
+              aria-hidden="true"
+            />
+          )}
+          <span className="font-semibold text-foreground tracking-tight">
+            {truncated}
+          </span>
+        </button>
+        <button
+          type="button"
           onClick={handleCopy}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              handleCopy();
-            }
-          }}
-          className="ml-0.5 p-0.5 rounded text-slate-400 hover:text-slate-800 hover:bg-slate-200 transition-colors"
+          className="px-1.5 py-1 rounded-r border-l border-border/60 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
           title="Copy digest"
           aria-label="Copy SHA-256 digest"
         >
           {copied ? (
-            <Check className="h-3 w-3 text-emerald-600 animate-in zoom-in-50" />
+            <Check className="h-3 w-3 text-emerald-600 dark:text-emerald-400 animate-in zoom-in-50" />
           ) : (
             <Copy className="h-3 w-3" />
           )}
-        </span>
-      </button>
+        </button>
+      </div>
 
       {/* Popover showing full 64-character SHA-256 digest */}
       {popoverOpen && (
@@ -125,7 +127,7 @@ export function Sha256DigestChip({
         >
           <div className="flex items-center justify-between pb-2 border-b border-border">
             <div className="flex items-center gap-1.5">
-              <ShieldCheck className="h-4 w-4 text-emerald-600" />
+              <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
               <span className="text-xs font-semibold text-foreground">
                 SHA-256 Digest Verified
               </span>

@@ -132,8 +132,10 @@ jobs:
         run: pnpm test:integration
 
   e2e:
-    name: Playwright E2E (PR to main)
-    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    name: Playwright E2E (PR & Push to main)
+    if: >-
+      (github.event_name == 'pull_request' && github.base_ref == 'main') ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -227,12 +229,12 @@ jobs:
           SUPABASE_STORAGE_BUCKET: veridoc-controlled-docs
           AUDIT_HASH_SALT: veridoc_ci_e2e_salt
           ENABLE_DEMO_LOGIN: "true"
-        run: pnpm test:e2e
+        run: pnpm exec playwright test --grep-invert "Production Smoke"
 
   deploy-gate:
     name: Pre-Deploy Migration Gate & Production Deploy
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [verify, integration]
+    needs: [verify, integration, e2e]
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -273,4 +275,17 @@ jobs:
             pnpm dlx vercel@latest deploy --prod --yes --token="$VERCEL_TOKEN"
           else
             echo "VERCEL_TOKEN not set; skipping CLI deploy"
+          fi
+
+      - name: Run post-deploy production smoke suite
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          PLAYWRIGHT_TEST_BASE_URL: https://veridoc-six.vercel.app
+          PLAYWRIGHT_INCLUDE_PROD_SMOKE: "1"
+        run: |
+          if [ -n "$VERCEL_TOKEN" ]; then
+            pnpm exec playwright install --with-deps chromium
+            pnpm exec playwright test e2e/production-smoke.spec.ts
+          else
+            echo "VERCEL_TOKEN not set; skipping post-deploy production smoke"
           fi

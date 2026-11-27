@@ -53,7 +53,7 @@ export function DocumentsView({
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 px-4 py-6 sm:px-8 max-w-7xl w-full mx-auto space-y-6">
+      <div className="flex-1 min-w-0 px-4 py-6 sm:px-8 max-w-7xl w-full mx-auto space-y-6">
         {/* 1. Header & Actions Strip (matching .stitch-ref/07-controlled-documents.html) */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5">
           <div className="space-y-1">

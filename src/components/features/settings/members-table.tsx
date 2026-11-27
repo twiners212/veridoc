@@ -91,16 +91,16 @@ export function MembersTable({
   const getRoleIcon = (role: WorkspaceRole) => {
     switch (role) {
       case "WORKSPACE_ADMIN":
-        return <Shield className="h-3.5 w-3.5 text-primary" />;
+        return <Shield className="h-3.5 w-3.5 text-primary dark:text-blue-400" />;
       case "QUALITY_MANAGER":
-        return <Shield className="h-3.5 w-3.5 text-indigo-600" />;
+        return <Shield className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />;
       case "DOCUMENT_AUTHOR":
-        return <FileText className="h-3.5 w-3.5 text-amber-600" />;
+        return <FileText className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />;
       case "APPROVER_REVIEWER":
-        return <FileCheck className="h-3.5 w-3.5 text-blue-600" />;
+        return <FileCheck className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />;
       case "READER":
       default:
-        return <BookOpen className="h-3.5 w-3.5 text-emerald-600" />;
+        return <BookOpen className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />;
     }
   };
 
@@ -114,13 +114,13 @@ export function MembersTable({
     }
     if (role === "READER") {
       return (
-        <span className="inline-flex items-center rounded bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 border border-emerald-200">
+        <span className="inline-flex items-center rounded bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800">
           Reader Pack
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center rounded bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary border border-primary/20">
+      <span className="inline-flex items-center rounded bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary border border-primary/20 dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-500/30">
         Creator Seat
       </span>
     );
@@ -144,6 +144,7 @@ export function MembersTable({
 
         <div className="flex flex-wrap w-full sm:w-auto items-center gap-2">
           <select
+            aria-label="Filter by role"
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
             className="rounded-md border border-input bg-background px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
@@ -157,6 +158,7 @@ export function MembersTable({
           </select>
 
           <select
+            aria-label="Filter by status"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="rounded-md border border-input bg-background px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
@@ -208,7 +210,7 @@ export function MembersTable({
                       {/* Member Info */}
                       <td className="px-4 py-3">
                         <div className="flex items-center space-x-3">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-xs uppercase">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary dark:bg-blue-500/15 dark:text-blue-300 font-bold text-xs uppercase">
                             {m.name.slice(0, 2) || "U"}
                           </div>
                           <div className="flex flex-col">
@@ -254,19 +256,19 @@ export function MembersTable({
                             ))}
                           </div>
                         ) : (
-                          <span className="text-xs text-muted-foreground/60 italic">None</span>
+                          <span className="text-xs text-muted-foreground italic">None</span>
                         )}
                       </td>
 
                       {/* Status */}
                       <td className="px-4 py-3">
                         {m.status === "ACTIVE" && (
-                          <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                          <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
                             ACTIVE
                           </span>
                         )}
                         {m.status === "INVITED" && (
-                          <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                          <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:bg-amber-950/60 dark:text-amber-300">
                             INVITED
                           </span>
                         )}

@@ -197,7 +197,7 @@ export function SignInForm({
                 </p>
                 <p className="text-muted-foreground">
                   Active workspace: <strong className="text-foreground">{currentUser.tenantName}</strong> • Role:{" "}
-                  <span className="font-mono font-semibold text-primary">
+                  <span className="font-mono font-semibold text-primary dark:text-blue-400">
                     {currentUser.role.replace(/_/g, " ")}
                   </span>
                 </p>
@@ -205,7 +205,7 @@ export function SignInForm({
             </div>
             <Link
               href={currentUser.landingRoute}
-              className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-1.5 rounded-md bg-brand-gradient-subtle border border-primary/25 px-4 py-2 text-xs font-semibold text-primary hover:opacity-90"
+              className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-1.5 rounded-md bg-brand-gradient-subtle border border-primary/25 px-4 py-2 text-xs font-semibold text-primary dark:text-blue-300 hover:opacity-90"
             >
               <span>Return to Workspace</span>
               <ArrowRight className="h-3.5 w-3.5" />
@@ -242,7 +242,7 @@ export function SignInForm({
             <Card className="relative h-full overflow-hidden border-border bg-card shadow-sm transition-shadow hover:shadow-md">
             <div className="h-1 w-full bg-brand-gradient" />
             <CardHeader className="space-y-1.5 pb-4">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
+              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary dark:text-blue-400">
                 <Lock className="h-3.5 w-3.5" />
                 <span>Workspace Authentication</span>
               </div>
@@ -337,7 +337,7 @@ export function SignInForm({
               <div className="h-1 w-full bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600" />
               <CardHeader className="space-y-2 border-b border-border bg-brand-gradient-subtle pb-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
+                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary dark:text-blue-400">
                     <UserCheck className="h-3.5 w-3.5" />
                     <span>Quick Demo Login (Testing &amp; Evaluation)</span>
                   </div>
@@ -381,7 +381,7 @@ export function SignInForm({
                               <span className="text-sm font-semibold text-foreground">
                                 {account.name}
                               </span>
-                              <span className="rounded bg-primary/15 px-2 py-0.5 font-mono text-[10px] font-semibold text-primary">
+                              <span className="rounded bg-primary/15 px-2 py-0.5 font-mono text-[10px] font-semibold text-primary dark:bg-blue-500/20 dark:text-blue-300">
                                 {account.roleLabel}
                               </span>
                               <span className="font-mono text-[11px] text-muted-foreground">
@@ -396,7 +396,7 @@ export function SignInForm({
                             </p>
                           </div>
 
-                          <div className="flex shrink-0 items-center justify-end gap-1.5 text-xs font-semibold text-primary">
+                          <div className="flex shrink-0 items-center justify-end gap-1.5 text-xs font-semibold text-primary dark:text-blue-400">
                             {isLoadingThis ? (
                               <>
                                 <Loader2 className="h-4 w-4 animate-spin" />

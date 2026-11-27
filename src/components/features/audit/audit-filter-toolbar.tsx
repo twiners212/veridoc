@@ -47,6 +47,7 @@ export function AuditFilterToolbar({
         {/* Event Type Dropdown */}
         <div className="relative">
           <select
+            aria-label="Filter by event type"
             value={eventType}
             onChange={(e) => onEventTypeChange(e.target.value)}
             className="appearance-none pl-3 pr-8 py-1.5 bg-background border border-border rounded text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary hover:bg-muted/50 cursor-pointer transition-colors"
@@ -68,6 +69,7 @@ export function AuditFilterToolbar({
         {/* Role Dropdown */}
         <div className="relative">
           <select
+            aria-label="Filter by role"
             value={role}
             onChange={(e) => onRoleChange(e.target.value)}
             className="appearance-none pl-3 pr-8 py-1.5 bg-background border border-border rounded text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary hover:bg-muted/50 cursor-pointer transition-colors"

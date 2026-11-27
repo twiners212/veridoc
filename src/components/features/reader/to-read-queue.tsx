@@ -225,7 +225,7 @@ export function ToReadQueue({
         {/* Compliance Target Progress Bar */}
         <div className="mt-4 pt-3.5 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-primary" />
+            <ShieldCheck className="h-4 w-4 text-primary dark:text-blue-400" />
             <span className="font-medium text-foreground">Shift Compliance Target</span>
           </div>
           <div className="flex items-center gap-2.5">
@@ -235,7 +235,7 @@ export function ToReadQueue({
                 style={{ width: `${compliancePercent}%` }}
               />
             </div>
-            <span className="font-mono text-xs font-bold text-primary">
+            <span className="font-mono text-xs font-bold text-primary dark:text-blue-400">
               {compliancePercent}%
             </span>
           </div>
@@ -250,7 +250,7 @@ export function ToReadQueue({
           className={cn(
             "min-h-[44px] flex-1 pb-3 pt-2 text-center text-xs font-semibold border-b-2 transition-colors relative flex items-center justify-center gap-2 touch-manipulation",
             activeTab === "pending"
-              ? "border-primary text-primary"
+              ? "border-primary text-primary dark:border-blue-400 dark:text-blue-400"
               : "border-transparent text-muted-foreground hover:text-foreground"
           )}
         >
@@ -269,7 +269,7 @@ export function ToReadQueue({
           className={cn(
             "min-h-[44px] flex-1 pb-3 pt-2 text-center text-xs font-semibold border-b-2 transition-colors relative flex items-center justify-center gap-2 touch-manipulation",
             activeTab === "completed"
-              ? "border-primary text-primary"
+              ? "border-primary text-primary dark:border-blue-400 dark:text-blue-400"
               : "border-transparent text-muted-foreground hover:text-foreground"
           )}
         >
@@ -389,7 +389,7 @@ export function ToReadQueue({
 
                       {/* Due / Overdue Badge */}
                       {isOverdue ? (
-                        <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-destructive/10 text-destructive text-[11px] font-bold border border-destructive/20 shrink-0">
+                        <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-destructive/10 text-destructive dark:bg-red-500/15 dark:text-red-400 text-[11px] font-bold border border-destructive/20 dark:border-red-500/30 shrink-0">
                           <AlertTriangle className="h-3 w-3" />
                           <span>Overdue</span>
                         </div>
@@ -407,7 +407,7 @@ export function ToReadQueue({
                     </div>
 
                     {/* Title */}
-                    <h2 className="text-base sm:text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors leading-snug">
+                    <h2 className="text-base sm:text-lg font-bold text-foreground mb-2 group-hover:text-primary dark:group-hover:text-blue-400 transition-colors leading-snug">
                       <Link
                         href={`/read/${item.documentId}?versionId=${item.documentVersionId}&assignmentId=${item.id}`}
                         className="hover:underline focus-visible:outline-none"
@@ -435,7 +435,7 @@ export function ToReadQueue({
 
                       <Link
                         href={`/read/${item.documentId}?versionId=${item.documentVersionId}&assignmentId=${item.id}`}
-                        className="min-h-[44px] inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold text-xs text-primary bg-primary/10 hover:bg-primary hover:text-primary-foreground transition-all group-hover:translate-x-0.5 touch-manipulation"
+                        className="min-h-[44px] inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold text-xs text-primary dark:text-blue-300 bg-primary/10 dark:bg-blue-500/15 hover:bg-primary hover:text-primary-foreground dark:hover:text-primary-foreground transition-all group-hover:translate-x-0.5 touch-manipulation"
                       >
                         <span>Tap to Read & Sign</span>
                         <ArrowRight className="h-3.5 w-3.5" />
@@ -472,7 +472,7 @@ export function ToReadQueue({
                   <div className="mt-1 flex items-center gap-2 font-mono text-[11px] text-muted-foreground">
                     <span>Receipt: <strong className="text-foreground">#{completedItems[0].acknowledgmentId || "Recorded"}</strong></span>
                     <span>•</span>
-                    <span className="text-emerald-600 font-medium">Logged & Bound</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-medium">Logged & Bound</span>
                   </div>
                 </div>
               </div>
@@ -480,7 +480,7 @@ export function ToReadQueue({
               <button
                 type="button"
                 onClick={() => setActiveTab("completed")}
-                className="min-h-[44px] flex items-center justify-center gap-1.5 text-xs text-primary font-semibold hover:underline pt-2 border-t border-border/60 touch-manipulation"
+                className="min-h-[44px] flex items-center justify-center gap-1.5 text-xs text-primary dark:text-blue-400 font-semibold hover:underline pt-2 border-t border-border/60 touch-manipulation"
               >
                 <span>View all {completedItems.length} completed receipts in History tab</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -533,7 +533,7 @@ export function ToReadQueue({
                   </div>
 
                   <div className="pt-2.5 border-t border-border flex items-center justify-between">
-                    <span className="text-[11px] text-emerald-600 font-mono font-medium">
+                    <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-mono font-medium">
                       Immutable Audit Seal Bound
                     </span>
                     <Link

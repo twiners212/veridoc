@@ -18,11 +18,11 @@ export function AuditStatsStrip({ stats }: AuditStatsStripProps) {
           <span className="font-mono text-lg font-bold text-foreground mt-0.5">
             #{stats.ledgerHead.toLocaleString()}
           </span>
-          <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 mt-0.5">
+          <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-400 mt-0.5">
             Continuous sync
           </span>
         </div>
-        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary dark:bg-blue-500/15 dark:text-blue-400">
           <Database className="h-5 w-5" />
         </div>
       </div>
@@ -40,7 +40,7 @@ export function AuditStatsStrip({ stats }: AuditStatsStripProps) {
             Application-Layer Chained
           </span>
         </div>
-        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary dark:bg-blue-500/15 dark:text-blue-400">
           <Lock className="h-5 w-5" />
         </div>
       </div>
@@ -72,11 +72,11 @@ export function AuditStatsStrip({ stats }: AuditStatsStripProps) {
           <span className="font-mono text-lg font-bold text-foreground mt-0.5">
             {stats.readAttestations.toLocaleString()}
           </span>
-          <span className="text-[11px] font-medium text-sky-600 dark:text-sky-400 mt-0.5">
+          <span className="text-[11px] font-medium text-sky-700 dark:text-sky-400 mt-0.5">
             Dwell verified
           </span>
         </div>
-        <div className="w-10 h-10 rounded-lg bg-sky-50 dark:bg-sky-950/40 flex items-center justify-center text-sky-600 dark:text-sky-400">
+        <div className="w-10 h-10 rounded-lg bg-sky-50 dark:bg-sky-950/40 flex items-center justify-center text-sky-700 dark:text-sky-400">
           <CheckSquare className="h-5 w-5" />
         </div>
       </div>

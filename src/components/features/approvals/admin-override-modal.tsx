@@ -10,6 +10,7 @@ import {
   UserX,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useModalA11y } from "@/components/ui/use-modal-a11y";
 import { adminOverrideApproverAction } from "@/server/actions/approval.actions";
 import type { WorkspaceRole } from "@/types/roles";
 
@@ -58,6 +59,14 @@ export function AdminOverrideModal({
   const [justification, setJustification] = React.useState("");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const modalRef = React.useRef<HTMLDivElement>(null);
+
+  useModalA11y({
+    isOpen,
+    onClose,
+    disabled: isSubmitting,
+    containerRef: modalRef,
+  });
 
   // Eligible replacement approvers: active status, approval role, not author, not current approver
   const eligibleApprovers = React.useMemo(() => {
@@ -135,6 +144,7 @@ export function AdminOverrideModal({
 
   return (
     <div
+      ref={modalRef}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
@@ -162,6 +172,7 @@ export function AdminOverrideModal({
             onClick={onClose}
             disabled={isSubmitting}
             className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            aria-label="Close dialog"
           >
             <X className="h-4 w-4" />
           </button>

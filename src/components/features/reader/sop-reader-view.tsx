@@ -94,8 +94,12 @@ export function SopReaderView({
   onAcknowledge,
 }: SopReaderViewProps) {
   // Dwell time & Scroll progress tracking
-  const [dwellTimeSeconds, setDwellTimeSeconds] = React.useState(0);
-  const [maxScrollPercent, setMaxScrollPercent] = React.useState(0);
+  const [dwellTimeSeconds, setDwellTimeSeconds] = React.useState(
+    isAlreadyAcknowledged ? 10 : 0
+  );
+  const [maxScrollPercent, setMaxScrollPercent] = React.useState(
+    isAlreadyAcknowledged ? 100 : 0
+  );
 
   // Modals state
   const [isConfirmationOpen, setIsConfirmationOpen] = React.useState(false);
@@ -283,7 +287,7 @@ export function SopReaderView({
           <div className="flex items-center min-w-0 gap-1.5">
             <Link
               href="/to-read"
-              className="min-w-[44px] min-h-[44px] flex items-center justify-center text-foreground hover:text-primary rounded-xl active:bg-muted transition-colors touch-manipulation"
+              className="min-w-[44px] min-h-[44px] flex items-center justify-center text-foreground hover:text-primary dark:hover:text-blue-400 rounded-xl active:bg-muted transition-colors touch-manipulation"
               aria-label="Back to To-Read Queue"
             >
               <ChevronLeft className="h-5 w-5" />
@@ -317,20 +321,29 @@ export function SopReaderView({
         {/* Sticky Live Progress Indicator / Reading Depth Gauge */}
         <div className="sticky top-14 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-2 bg-muted/90 backdrop-blur-sm border-b border-border shadow-xs flex items-center justify-between text-xs font-mono">
           <div className="flex items-center gap-1.5">
-            {isReadingReqsMet ? (
-              <span className="flex items-center gap-1 text-emerald-600 font-semibold">
+            {acknowledged ? (
+              <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
+                <CheckCircle2 className="h-4 w-4" />
+                <span>Acknowledgment Recorded</span>
+              </span>
+            ) : isReadingReqsMet ? (
+              <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
                 <CheckCircle2 className="h-4 w-4" />
                 <span>Reading Requirements Fulfilled</span>
               </span>
             ) : (
-              <span className="flex items-center gap-1 text-amber-600 font-medium">
+              <span className="flex items-center gap-1 text-amber-800 dark:text-amber-300 font-medium">
                 <Clock className="h-3.5 w-3.5 animate-pulse" />
                 <span>Scroll: {Math.min(100, Math.round(maxScrollPercent))}%/90% • Time: {dwellTimeSeconds}s/10s</span>
               </span>
             )}
           </div>
           <span className="text-muted-foreground font-medium text-[11px]">
-            {isReadingReqsMet ? "READY TO SIGN" : `${Math.min(100, Math.round(((Math.min(1, maxScrollPercent / 90) + Math.min(1, dwellTimeSeconds / 10)) / 2) * 100))}%`}
+            {acknowledged
+              ? "SIGNED"
+              : isReadingReqsMet
+              ? "READY TO SIGN"
+              : `${Math.min(100, Math.round(((Math.min(1, maxScrollPercent / 90) + Math.min(1, dwellTimeSeconds / 10)) / 2) * 100))}%`}
           </span>
         </div>
 
@@ -379,7 +392,7 @@ export function SopReaderView({
             <div className="space-y-4">
               <div className="flex items-center justify-between pb-2 border-b border-border">
                 <div className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-primary" />
+                  <FileText className="h-4 w-4 text-primary dark:text-blue-400" />
                   <span className="text-xs font-semibold text-foreground">
                     Controlled PDF Specification
                   </span>
@@ -389,7 +402,7 @@ export function SopReaderView({
                     href={signedPdfUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs text-primary font-medium hover:underline"
+                    className="inline-flex items-center gap-1 text-xs text-primary dark:text-blue-400 font-medium hover:underline"
                   >
                     <span>Open in New Tab</span>
                     <ExternalLink className="h-3 w-3" />
@@ -399,7 +412,7 @@ export function SopReaderView({
 
               {isLoadingPdf ? (
                 <div className="h-96 flex flex-col items-center justify-center gap-3 bg-muted/30 rounded-xl border border-dashed border-border text-muted-foreground">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  <Loader2 className="h-8 w-8 animate-spin text-primary dark:text-blue-400" />
                   <p className="text-xs">Fetching short-lived signed PDF preview...</p>
                 </div>
               ) : pdfLoadError ? (
@@ -494,7 +507,7 @@ export function SopReaderView({
                 </Markdown>
               ) : (
                 <div className="rounded-xl border border-border bg-muted/30 p-6 text-center space-y-2">
-                  <AlertTriangle className="h-6 w-6 text-amber-600 mx-auto" />
+                  <AlertTriangle className="h-6 w-6 text-amber-600 dark:text-amber-400 mx-auto" />
                   <p className="text-sm font-semibold text-foreground">
                     Controlled Procedure Text Unavailable
                   </p>

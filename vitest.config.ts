@@ -7,12 +7,28 @@ config();
 
 export default defineConfig({
   test: {
-    include: ["tests/**/*.test.ts"],
     globals: true,
     environment: "node",
     testTimeout: 60000,
     hookTimeout: 60000,
     fileParallelism: false,
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "unit",
+          include: ["tests/unit/**/*.test.ts"],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "integration",
+          include: ["tests/integration/**/*.test.ts"],
+          setupFiles: ["./tests/helpers/vitest.integration.setup.ts"],
+        },
+      },
+    ],
   },
   resolve: {
     alias: {

@@ -26,11 +26,13 @@ export function ReaderAcknowledgmentBar({
   const isScrollMet = scrollPercent >= requiredScrollPercent;
   const isDwellMet = dwellTimeSeconds >= requiredDwellSeconds;
   const isReady = isScrollMet && isDwellMet;
+  const isFulfilled = isAlreadyAcknowledged || isReady;
 
   // Calculate composite progress towards 100%
   const scrollRatio = Math.min(1, scrollPercent / requiredScrollPercent);
   const dwellRatio = Math.min(1, dwellTimeSeconds / requiredDwellSeconds);
   const compositeProgressPercent = Math.round(((scrollRatio + dwellRatio) / 2) * 100);
+  const effectiveProgressPercent = isAlreadyAcknowledged ? 100 : compositeProgressPercent;
 
   return (
     <aside
@@ -44,14 +46,19 @@ export function ReaderAcknowledgmentBar({
         {/* Engagement Progress Feedback Strip */}
         <div className="flex items-center justify-between text-xs font-mono">
           <div className="flex items-center gap-2">
-            {isReady ? (
-              <span className="flex items-center gap-1.5 text-emerald-600 font-semibold">
-                <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+            {isAlreadyAcknowledged ? (
+              <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-semibold">
+                <CheckCircle2 className="h-4 w-4 shrink-0" />
+                <span>Acknowledgment Verified &amp; Bound</span>
+              </span>
+            ) : isReady ? (
+              <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-semibold">
+                <CheckCircle2 className="h-4 w-4 shrink-0" />
                 <span>Reading Requirements Fulfilled</span>
               </span>
             ) : (
-              <span className="flex items-center gap-1.5 text-amber-600 font-medium">
-                <Clock className="h-3.5 w-3.5 shrink-0 animate-pulse text-amber-600" />
+              <span className="flex items-center gap-1.5 text-amber-800 dark:text-amber-300 font-medium">
+                <Clock className="h-3.5 w-3.5 shrink-0 animate-pulse" />
                 <span>
                   Scroll: {Math.min(100, Math.round(scrollPercent))}%/{requiredScrollPercent}% • Time: {dwellTimeSeconds}s/{requiredDwellSeconds}s
                 </span>
@@ -70,7 +77,7 @@ export function ReaderAcknowledgmentBar({
               </span>
             ) : (
               <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-muted text-muted-foreground">
-                {compositeProgressPercent}%
+                {effectiveProgressPercent}%
               </span>
             )}
           </div>
@@ -80,16 +87,17 @@ export function ReaderAcknowledgmentBar({
         <div
           className="w-full h-1.5 bg-muted rounded-full overflow-hidden"
           role="progressbar"
-          aria-valuenow={compositeProgressPercent}
+          aria-label="Reading acknowledgment progress"
+          aria-valuenow={effectiveProgressPercent}
           aria-valuemin={0}
           aria-valuemax={100}
         >
           <div
             className={cn(
               "h-full rounded-full transition-all duration-300",
-              isReady ? "bg-emerald-600" : "bg-brand-gradient"
+              isFulfilled ? "bg-emerald-600" : "bg-brand-gradient"
             )}
-            style={{ width: `${compositeProgressPercent}%` }}
+            style={{ width: `${effectiveProgressPercent}%` }}
           />
         </div>
 

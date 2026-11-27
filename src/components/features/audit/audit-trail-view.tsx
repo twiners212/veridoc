@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import {
+  AlertTriangle,
   CheckCircle2,
   Download,
   ShieldCheck,
@@ -12,6 +13,7 @@ import {
   FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useModalA11y } from "@/components/ui/use-modal-a11y";
 import { AuditStatsStrip } from "./audit-stats-strip";
 import { AuditFilterToolbar } from "./audit-filter-toolbar";
 import { AuditTable } from "./audit-table";
@@ -53,11 +55,29 @@ export function AuditTrailView({
 
   // Verification & Export states
   const [isVerifying, setIsVerifying] = React.useState(false);
+  const [chainStatus, setChainStatus] = React.useState<"UNKNOWN" | "VERIFIED" | "FAILED">(
+    initialStats.chainVerified === false
+      ? "FAILED"
+      : initialStats.chainVerified === true
+      ? "VERIFIED"
+      : "UNKNOWN"
+  );
+  const [failedSeq, setFailedSeq] = React.useState<number | undefined>(
+    initialStats.failedSequenceNumber
+  );
   const [exportModalOpen, setExportModalOpen] = React.useState(false);
+  const exportModalRef = React.useRef<HTMLDivElement>(null);
   const [toastNotification, setToastNotification] = React.useState<{
+    variant: "success" | "error";
     title: string;
     description: string;
   } | null>(null);
+
+  useModalA11y({
+    isOpen: exportModalOpen,
+    onClose: () => setExportModalOpen(false),
+    containerRef: exportModalRef,
+  });
 
   // Fetch logs with query parameters
   const fetchLogs = React.useCallback(
@@ -82,6 +102,13 @@ export function AuditTrailView({
           setHasMore(json.data.hasMore);
           if (json.data.stats) {
             setStats(json.data.stats);
+            if (json.data.stats.chainVerified === false) {
+              setChainStatus("FAILED");
+              setFailedSeq(json.data.stats.failedSequenceNumber);
+            } else if (json.data.stats.chainVerified === true) {
+              setChainStatus("VERIFIED");
+              setFailedSeq(undefined);
+            }
           }
         }
       } catch (err) {
@@ -149,12 +176,18 @@ export function AuditTrailView({
       if (json.success && json.data) {
         const v = json.data;
         if (v.verified) {
+          setChainStatus("VERIFIED");
+          setFailedSeq(undefined);
           setToastNotification({
+            variant: "success",
             title: "Integrity Verified",
             description: `${v.totalEntries.toLocaleString()} blocks re-hashed sequentially. Zero payload tampering detected.`,
           });
         } else {
+          setChainStatus("FAILED");
+          setFailedSeq(v.failedSequenceNumber);
           setToastNotification({
+            variant: "error",
             title: "Integrity Check Failed",
             description: `Tampering or sequence mismatch detected at block #${v.failedSequenceNumber ?? "N/A"}: ${v.failureReason ?? "Mismatch"}`,
           });
@@ -162,6 +195,7 @@ export function AuditTrailView({
       }
     } catch {
       setToastNotification({
+        variant: "error",
         title: "Verification Error",
         description: "Failed to communicate with the verification endpoint.",
       });
@@ -192,11 +226,22 @@ export function AuditTrailView({
     : "genesis";
 
   return (
-    <div className="p-6 md:p-8 flex flex-col gap-6 max-w-7xl mx-auto w-full">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6 max-w-7xl mx-auto w-full min-w-0">
       {/* Toast Notification on Chain Verification */}
       {toastNotification && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-card text-foreground px-4 py-3 rounded-lg shadow-xl border-l-4 border-l-emerald-600 border border-border transition-all duration-300">
-          <ShieldCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+        <div
+          role={toastNotification.variant === "error" ? "alert" : "status"}
+          className={`fixed bottom-20 lg:bottom-6 right-4 sm:right-6 z-50 flex items-center gap-3 bg-card text-foreground px-4 py-3 rounded-lg shadow-xl border-l-4 border border-border transition-all duration-300 max-w-md ${
+            toastNotification.variant === "error"
+              ? "border-l-destructive"
+              : "border-l-emerald-600"
+          }`}
+        >
+          {toastNotification.variant === "error" ? (
+            <AlertTriangle className="h-5 w-5 text-destructive dark:text-red-400 shrink-0" />
+          ) : (
+            <ShieldCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          )}
           <div className="flex flex-col text-left">
             <span className="text-xs font-semibold">{toastNotification.title}</span>
             <span className="text-[11px] text-muted-foreground">
@@ -207,6 +252,7 @@ export function AuditTrailView({
             type="button"
             className="ml-4 text-muted-foreground hover:text-foreground"
             onClick={() => setToastNotification(null)}
+            aria-label="Dismiss notification"
           >
             <X className="h-4 w-4" />
           </button>
@@ -220,16 +266,41 @@ export function AuditTrailView({
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
               Governance Audit Trail
             </h1>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800">
-              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span className="text-xs font-semibold">
-                Append-Only Hash Chain Verified
-              </span>
-              <span className="text-emerald-400">•</span>
-              <span className="font-mono text-[11px] tracking-wider">
-                root: {truncatedHead}
-              </span>
-            </div>
+            {chainStatus === "FAILED" ? (
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-destructive/10 text-destructive border border-destructive/30 dark:bg-red-500/15 dark:text-red-400 dark:border-red-500/40">
+                <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                <span className="text-xs font-semibold">
+                  Hash Chain Verification Failed
+                  {failedSeq !== undefined ? ` (#${failedSeq})` : ""}
+                </span>
+                <span className="opacity-60">•</span>
+                <span className="font-mono text-[11px] tracking-wider">
+                  root: {truncatedHead}
+                </span>
+              </div>
+            ) : chainStatus === "VERIFIED" ? (
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800">
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span className="text-xs font-semibold">
+                  Append-Only Hash Chain Verified
+                </span>
+                <span className="text-emerald-500 dark:text-emerald-400">•</span>
+                <span className="font-mono text-[11px] tracking-wider">
+                  root: {truncatedHead}
+                </span>
+              </div>
+            ) : (
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-muted text-muted-foreground border border-border">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                <span className="text-xs font-semibold">
+                  Append-Only Hash Chain (Unchecked)
+                </span>
+                <span className="opacity-60">•</span>
+                <span className="font-mono text-[11px] tracking-wider">
+                  root: {truncatedHead}
+                </span>
+              </div>
+            )}
           </div>
           <p className="text-xs text-muted-foreground">
             Immutable sequential ledger tracking all document state transitions,
@@ -248,7 +319,7 @@ export function AuditTrailView({
             className="gap-1.5 text-xs font-medium"
           >
             <CheckCircle2
-              className={`h-4 w-4 text-primary ${
+              className={`h-4 w-4 text-primary dark:text-blue-400 ${
                 isVerifying ? "animate-spin" : ""
               }`}
             />
@@ -305,8 +376,10 @@ export function AuditTrailView({
           </span>
           <div className="h-3 w-px bg-border hidden sm:block" />
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <span>Rows:</span>
+            <label htmlFor="audit-rows-per-page">Rows:</label>
             <select
+              id="audit-rows-per-page"
+              aria-label="Rows per page"
               value={limit}
               onChange={(e) => {
                 hasInteractedRef.current = true;
@@ -356,15 +429,22 @@ export function AuditTrailView({
       {/* Export Format Modal */}
       {exportModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-card text-card-foreground border border-border rounded-xl shadow-2xl p-6 max-w-md w-full flex flex-col gap-4">
+          <div
+            ref={exportModalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="export-audit-modal-title"
+            className="bg-card text-card-foreground border border-border rounded-xl shadow-2xl p-6 max-w-md w-full flex flex-col gap-4"
+          >
             <div className="flex items-center justify-between border-b border-border pb-3">
-              <h3 className="text-sm font-bold text-foreground">
+              <h3 id="export-audit-modal-title" className="text-sm font-bold text-foreground">
                 Export Audit Packet
               </h3>
               <button
                 type="button"
                 onClick={() => setExportModalOpen(false)}
                 className="text-muted-foreground hover:text-foreground"
+                aria-label="Close export modal"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -382,7 +462,7 @@ export function AuditTrailView({
                 onClick={() => handleExport("json")}
                 className="p-4 rounded-lg border border-border hover:border-primary/60 hover:bg-primary/5 transition-all flex flex-col items-center gap-2 text-center group"
               >
-                <FileSpreadsheet className="h-6 w-6 text-primary group-hover:scale-105 transition-transform" />
+                <FileSpreadsheet className="h-6 w-6 text-primary dark:text-blue-400 group-hover:scale-105 transition-transform" />
                 <span className="text-xs font-semibold text-foreground">
                   JSON Data Packet
                 </span>
@@ -396,7 +476,7 @@ export function AuditTrailView({
                 onClick={() => handleExport("pdf")}
                 className="p-4 rounded-lg border border-border hover:border-primary/60 hover:bg-primary/5 transition-all flex flex-col items-center gap-2 text-center group"
               >
-                <FileText className="h-6 w-6 text-primary group-hover:scale-105 transition-transform" />
+                <FileText className="h-6 w-6 text-primary dark:text-blue-400 group-hover:scale-105 transition-transform" />
                 <span className="text-xs font-semibold text-foreground">
                   PDF Governance Document
                 </span>

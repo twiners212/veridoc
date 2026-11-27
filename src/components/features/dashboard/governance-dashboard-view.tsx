@@ -262,12 +262,12 @@ export function GovernanceDashboardView({
       )}
 
       {/* Main Container */}
-      <div className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
+      <div className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
         {/* Header Section */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2">
           <div className="space-y-1">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-primary font-bold bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-primary dark:text-blue-300 font-bold bg-primary/10 dark:bg-blue-500/15 px-2 py-0.5 rounded border border-primary/20 dark:border-blue-500/30">
                 {tenantName} • Governance Workspace
               </span>
               <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -316,7 +316,7 @@ export function GovernanceDashboardView({
         {/* 2. Main Content Grid (8-Col / 4-Col Layout) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left Column (8 cols): Active SOP Rollouts Table */}
-          <div className="lg:col-span-8">
+          <div className="lg:col-span-8 min-w-0">
             <ActiveRolloutsTable
               rollouts={rollouts}
               recentEventsCount={events.length}
@@ -327,7 +327,7 @@ export function GovernanceDashboardView({
           </div>
 
           {/* Right Column (4 cols): Recent Governance Activity Feed & Integrity Status */}
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-4 min-w-0">
             <ActivityFeed
               events={events}
               latestSequenceNumber={events.length}

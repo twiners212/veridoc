@@ -1,10 +1,11 @@
 import { config } from "dotenv";
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { test, expect } from "@playwright/test";
 import * as schema from "../src/db/schema";
 import { DEMO_TENANT } from "../src/lib/auth/demo-accounts";
+import { assertSafeE2eDatabaseUrl } from "./helpers/e2e-db-guard";
 
 config({ path: ".env.local" });
 config();
@@ -24,6 +25,7 @@ test.describe("Workflow Mutations & DB Persistence (AUD-001, AUD-002)", () => {
       process.env.DIRECT_DATABASE_URL || process.env.DATABASE_URL;
     if (!connectionString) return;
 
+    assertSafeE2eDatabaseUrl(connectionString);
     const client = postgres(connectionString, { prepare: false, max: 1 });
     const db = drizzle(client, { schema });
     try {
@@ -42,7 +44,6 @@ test.describe("Workflow Mutations & DB Persistence (AUD-001, AUD-002)", () => {
           await tx`SET LOCAL session_replication_role = 'replica'`;
           await tx`DELETE FROM veridoc.document_versions WHERE document_id = ANY(${docIds})`;
           await tx`DELETE FROM veridoc.documents WHERE id = ANY(${docIds})`;
-          await tx`DELETE FROM veridoc.audit_logs WHERE tenant_id = ${DEMO_TENANT.id} AND (payload_json->>'documentCode' = ${uniqueCode} OR entity_id = ANY(${docIds}))`;
         });
       }
     } catch {

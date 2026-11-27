@@ -38,50 +38,50 @@ export function AuditTable({ items, isLoading }: AuditTableProps) {
   }
 
   return (
-    <div className="bg-card border border-border rounded-lg shadow-sm overflow-hidden flex flex-col">
+    <div className="bg-card border border-border rounded-lg shadow-sm overflow-hidden flex flex-col min-w-0">
       <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[980px]">
+        <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-muted/40 border-b border-border">
               <th
                 scope="col"
-                className="py-2.5 px-3.5 font-mono text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-24"
+                className="py-2.5 px-2.5 2xl:px-3.5 font-mono text-[11px] font-semibold text-muted-foreground uppercase tracking-wider whitespace-nowrap"
               >
                 Seq #
               </th>
               <th
                 scope="col"
-                className="py-2.5 px-3.5 font-mono text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-44"
+                className="py-2.5 px-2.5 2xl:px-3.5 font-mono text-[11px] font-semibold text-muted-foreground uppercase tracking-wider"
               >
                 UTC Timestamp
               </th>
               <th
                 scope="col"
-                className="py-2.5 px-3.5 font-mono text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-56"
+                className="py-2.5 px-2.5 2xl:px-3.5 font-mono text-[11px] font-semibold text-muted-foreground uppercase tracking-wider"
               >
                 Event Type
               </th>
               <th
                 scope="col"
-                className="py-2.5 px-3.5 font-mono text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-44"
+                className="py-2.5 px-2.5 2xl:px-3.5 font-mono text-[11px] font-semibold text-muted-foreground uppercase tracking-wider"
               >
                 Document / Entity
               </th>
               <th
                 scope="col"
-                className="py-2.5 px-3.5 font-mono text-[11px] font-semibold text-muted-foreground uppercase tracking-wider min-w-[200px]"
+                className="py-2.5 px-2.5 2xl:px-3.5 font-mono text-[11px] font-semibold text-muted-foreground uppercase tracking-wider min-w-0"
               >
                 Actor &amp; Role
               </th>
               <th
                 scope="col"
-                className="py-2.5 px-3.5 font-mono text-[11px] font-semibold text-muted-foreground uppercase tracking-wider w-32"
+                className="hidden 2xl:table-cell py-2.5 px-3.5 font-mono text-[11px] font-semibold text-muted-foreground uppercase tracking-wider whitespace-nowrap"
               >
                 IP Address
               </th>
               <th
                 scope="col"
-                className="py-2.5 px-3.5 font-mono text-[11px] font-semibold text-muted-foreground uppercase tracking-wider min-w-[200px]"
+                className="py-2.5 px-2.5 2xl:px-3.5 font-mono text-[11px] font-semibold text-muted-foreground uppercase tracking-wider whitespace-nowrap"
               >
                 Entry Hash &amp; Signature
               </th>
@@ -104,24 +104,24 @@ export function AuditTable({ items, isLoading }: AuditTableProps) {
                   }`}
                 >
                   {/* 1. Seq # */}
-                  <td className="py-3 px-3.5 font-mono text-xs font-semibold text-primary">
+                  <td className="py-2.5 px-2.5 2xl:px-3.5 font-mono text-xs font-semibold text-primary dark:text-blue-400 whitespace-nowrap">
                     #{item.sequenceNumber}
                   </td>
 
                   {/* 2. UTC Timestamp */}
-                  <td className="py-3 px-3.5 font-mono text-[11px] text-muted-foreground whitespace-nowrap">
+                  <td className="py-2.5 px-2.5 2xl:px-3.5 font-mono text-[11px] text-muted-foreground whitespace-normal 2xl:whitespace-nowrap">
                     {formattedDate}
                   </td>
 
                   {/* 3. Event Type */}
-                  <td className="py-3 px-3.5">
+                  <td className="py-2.5 px-2.5 2xl:px-3.5">
                     <AuditEventBadge eventType={item.eventType} />
                   </td>
 
                   {/* 4. Document / Entity */}
-                  <td className="py-3 px-3.5">
+                  <td className="py-2.5 px-2.5 2xl:px-3.5">
                     {item.documentCode ? (
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="font-mono text-xs font-medium text-foreground">
                           {item.documentCode}
                         </span>
@@ -139,9 +139,9 @@ export function AuditTable({ items, isLoading }: AuditTableProps) {
                   </td>
 
                   {/* 5. Actor & Role */}
-                  <td className="py-3 px-3.5">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-primary/10 text-primary text-[10px] font-bold flex items-center justify-center shrink-0">
+                  <td className="py-2.5 px-2.5 2xl:px-3.5 min-w-0 max-w-[160px]">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="w-6 h-6 rounded-full bg-primary/10 text-primary dark:bg-blue-500/15 dark:text-blue-300 text-[10px] font-bold flex items-center justify-center shrink-0">
                         {getInitials(item.actorName)}
                       </div>
                       <div className="flex flex-col min-w-0">
@@ -158,12 +158,12 @@ export function AuditTable({ items, isLoading }: AuditTableProps) {
                   </td>
 
                   {/* 6. IP Address */}
-                  <td className="py-3 px-3.5 font-mono text-[11px] text-muted-foreground">
+                  <td className="hidden 2xl:table-cell py-2.5 px-3.5 font-mono text-[11px] text-muted-foreground whitespace-nowrap">
                     {item.actorIp ?? "—"}
                   </td>
 
                   {/* 7. Entry Hash & Signature */}
-                  <td className="py-3 px-3.5">
+                  <td className="py-2.5 px-2.5 2xl:px-3.5 whitespace-nowrap">
                     <div className="flex flex-col gap-0.5">
                       <div className="flex items-center gap-2">
                         <span

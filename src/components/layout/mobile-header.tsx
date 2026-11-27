@@ -52,9 +52,9 @@ export function MobileHeader({
       </Link>
 
       <div className="flex shrink-0 items-center gap-1.5">
-        <ThemeToggle className="h-9 w-9" />
+        <ThemeToggle />
         <div className="flex flex-col items-end">
-          <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+          <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary dark:bg-blue-500/15 dark:text-blue-300">
             {role.replace(/_/g, " ")}
           </span>
           {userName && (
@@ -69,7 +69,7 @@ export function MobileHeader({
             href="/auth/sign-in"
             aria-label="Switch Demo Role"
             title="Switch Demo Role"
-            className="inline-flex min-h-[44px] items-center justify-center gap-1 rounded border border-border bg-card px-2 text-[11px] font-medium text-foreground hover:bg-muted"
+            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1 rounded border border-border bg-card px-2.5 text-[11px] font-medium text-foreground hover:bg-muted"
           >
             <ArrowLeftRight className="h-3.5 w-3.5 text-muted-foreground" />
             <span className="sr-only sm:not-sr-only">Switch</span>

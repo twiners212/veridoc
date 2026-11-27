@@ -64,12 +64,12 @@ export function GovernancePoliciesPanel({
         <div
           className={`flex items-start space-x-2 rounded border p-3 text-xs ${
             feedback.type === "success"
-              ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+              ? "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300"
               : "border-destructive/40 bg-destructive/10 text-destructive"
           }`}
         >
           {feedback.type === "success" ? (
-            <Check className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+            <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
           ) : (
             <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
           )}
@@ -82,7 +82,7 @@ export function GovernancePoliciesPanel({
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-start space-x-3">
-              <div className="p-2 rounded bg-amber-500/10 text-amber-600 shrink-0 mt-0.5">
+              <div className="p-2 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5">
                 <ShieldAlert className="h-5 w-5" />
               </div>
               <div>
@@ -121,7 +121,7 @@ export function GovernancePoliciesPanel({
           </div>
         </CardHeader>
         <CardContent className="pt-2">
-          <div className="rounded border border-amber-200 bg-amber-50/50 p-3 text-xs text-amber-900 space-y-1">
+          <div className="rounded border border-amber-200 bg-amber-50/50 p-3 text-xs text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200 space-y-1">
             <p className="font-semibold flex items-center space-x-1">
               <span>Compliance & Audit Disclosure Note:</span>
             </p>
@@ -137,7 +137,7 @@ export function GovernancePoliciesPanel({
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-start space-x-3">
-              <div className="p-2 rounded bg-primary/10 text-primary shrink-0 mt-0.5">
+              <div className="p-2 rounded bg-primary/10 text-primary dark:bg-blue-500/15 dark:text-blue-400 shrink-0 mt-0.5">
                 <KeyRound className="h-5 w-5" />
               </div>
               <div>
@@ -151,7 +151,7 @@ export function GovernancePoliciesPanel({
             </div>
 
             <div className="flex items-center space-x-2 shrink-0 ml-4">
-              <span className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-200">
+              <span className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800">
                 ACTIVE (Core Invariant)
               </span>
             </div>

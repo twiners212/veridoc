@@ -13,6 +13,7 @@ import {
   Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useModalA11y } from "@/components/ui/use-modal-a11y";
 import { submitForApprovalAction } from "@/server/actions/approval.actions";
 import type { WorkspaceRole } from "@/types/roles";
 
@@ -54,6 +55,14 @@ export function SubmitForApprovalModal({
   const [steps, setSteps] = React.useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const modalRef = React.useRef<HTMLDivElement>(null);
+
+  useModalA11y({
+    isOpen,
+    onClose,
+    disabled: isSubmitting,
+    containerRef: modalRef,
+  });
 
   // Eligible approvers for selection
   const eligibleApprovers = React.useMemo(() => {
@@ -169,6 +178,7 @@ export function SubmitForApprovalModal({
 
   return (
     <div
+      ref={modalRef}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
@@ -197,6 +207,7 @@ export function SubmitForApprovalModal({
             onClick={onClose}
             disabled={isSubmitting}
             className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            aria-label="Close dialog"
           >
             <X className="h-4 w-4" />
           </button>
@@ -268,6 +279,7 @@ export function SubmitForApprovalModal({
                         {idx + 1}
                       </div>
                       <select
+                        aria-label={`Approver for stage ${idx + 1}`}
                         value={approverId}
                         onChange={(e) =>
                           handleApproverChange(idx, e.target.value)
@@ -287,6 +299,7 @@ export function SubmitForApprovalModal({
                           onClick={() => handleRemoveStep(idx)}
                           className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-muted rounded"
                           title="Remove stage"
+                          aria-label={`Remove stage ${idx + 1}`}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
