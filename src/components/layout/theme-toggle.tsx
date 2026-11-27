@@ -162,7 +162,9 @@ export function ThemeToggle({ className, showLabel = false }: ThemeToggleProps) 
       title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
       className={cn(
         "inline-flex items-center justify-center gap-1.5 rounded-md border border-border bg-card/80 px-2.5 py-1.5 text-xs font-medium text-foreground shadow-xs transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-        showLabel ? "min-h-[36px]" : "h-8 w-8 p-0",
+        showLabel
+          ? "min-h-[44px] lg:min-h-[36px]"
+          : "min-h-[44px] min-w-[44px] lg:h-9 lg:w-9 lg:min-h-0 lg:min-w-0 p-0",
         className
       )}
     >

@@ -15,6 +15,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useModalA11y } from "@/components/ui/use-modal-a11y";
 import { executeApprovalDecisionAction } from "@/server/actions/approval.actions";
 import { cn } from "@/lib/utils";
 import type { WorkspaceRole } from "@/types/roles";
@@ -62,6 +63,14 @@ export function SignOffReauthModal({
   const [copiedDigest, setCopiedDigest] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const modalRef = React.useRef<HTMLDivElement>(null);
+
+  useModalA11y({
+    isOpen,
+    onClose,
+    disabled: isSubmitting,
+    containerRef: modalRef,
+  });
 
   // Reset form when modal opens
   React.useEffect(() => {
@@ -169,6 +178,7 @@ export function SignOffReauthModal({
 
   return (
     <div
+      ref={modalRef}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"

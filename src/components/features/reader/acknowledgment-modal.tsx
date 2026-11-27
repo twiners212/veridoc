@@ -3,6 +3,7 @@
 import * as React from "react";
 import { ShieldAlert, ShieldCheck, X, Loader2, FileText, Fingerprint, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useModalA11y } from "@/components/ui/use-modal-a11y";
 
 export interface AcknowledgmentModalProps {
   isOpen: boolean;
@@ -36,6 +37,14 @@ export function AcknowledgmentModal({
   errorMessage = null,
 }: AcknowledgmentModalProps) {
   const [confirmedCheckbox, setConfirmedCheckbox] = React.useState(true);
+  const modalRef = React.useRef<HTMLDivElement>(null);
+
+  useModalA11y({
+    isOpen,
+    onClose,
+    disabled: isSubmitting,
+    containerRef: modalRef,
+  });
 
   if (!isOpen) return null;
 
@@ -43,6 +52,7 @@ export function AcknowledgmentModal({
 
   return (
     <div
+      ref={modalRef}
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in"
       role="dialog"
       aria-modal="true"

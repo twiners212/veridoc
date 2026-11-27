@@ -13,6 +13,7 @@ import {
   Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useModalA11y } from "@/components/ui/use-modal-a11y";
 import { publishDocumentVersionAction } from "@/server/actions/reader.actions";
 import { cn } from "@/lib/utils";
 
@@ -70,6 +71,14 @@ export function PublishDocumentModal({
   const [customDueDate, setCustomDueDate] = React.useState<string>("");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const modalRef = React.useRef<HTMLDivElement>(null);
+
+  useModalA11y({
+    isOpen,
+    onClose,
+    disabled: isSubmitting,
+    containerRef: modalRef,
+  });
 
   // Initialize selected groups when modal opens (select first group by default)
   React.useEffect(() => {
@@ -151,6 +160,7 @@ export function PublishDocumentModal({
 
   return (
     <div
+      ref={modalRef}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
       role="dialog"
       aria-modal="true"

@@ -29,19 +29,19 @@ export function QuotaCapacityStrip({
       {/* Creator Seats Card */}
       <Card className="border-border shadow-xs hover:border-primary/40 transition-colors">
         <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="p-2 rounded bg-primary/10 text-primary">
+          <div className="flex items-start justify-between gap-2 flex-wrap">
+            <div className="flex items-center space-x-2 min-w-0">
+              <div className="p-2 rounded bg-primary/10 text-primary shrink-0">
                 <Users className="h-5 w-5" />
               </div>
-              <div>
+              <div className="min-w-0">
                 <CardTitle className="text-base font-semibold">Creator Seats</CardTitle>
                 <CardDescription className="text-xs">
-                  Admins, Quality Managers, Authors & Approvers
+                  Admins, Quality Managers, Authors &amp; Approvers
                 </CardDescription>
               </div>
             </div>
-            <Badge variant="outline" className="text-xs font-semibold bg-primary/5 text-primary border-primary/20">
+            <Badge variant="outline" className="text-xs font-semibold bg-primary/5 text-primary border-primary/20 shrink-0">
               High Privilege
             </Badge>
           </div>
@@ -86,19 +86,22 @@ export function QuotaCapacityStrip({
       {/* Reader Pack Card (DEC-01) */}
       <Card className="border-border shadow-xs hover:border-emerald-500/40 transition-colors">
         <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="p-2 rounded bg-emerald-500/10 text-emerald-600">
+          <div className="flex items-start justify-between gap-2 flex-wrap">
+            <div className="flex items-center space-x-2 min-w-0">
+              <div className="p-2 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
                 <BookOpen className="h-5 w-5" />
               </div>
-              <div>
+              <div className="min-w-0">
                 <CardTitle className="text-base font-semibold">Operational Reader Pack</CardTitle>
                 <CardDescription className="text-xs">
-                  Frontline staff & SOP read-acknowledgment users
+                  Frontline staff &amp; SOP read-acknowledgment users
                 </CardDescription>
               </div>
             </div>
-            <Badge variant="outline" className="text-xs font-semibold bg-emerald-50 text-emerald-700 border-emerald-200">
+            <Badge
+              variant="outline"
+              className="text-xs font-semibold bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800 shrink-0"
+            >
               Tier Pack (DEC-01)
             </Badge>
           </div>

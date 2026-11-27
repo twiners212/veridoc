@@ -4,6 +4,7 @@ import * as React from "react";
 import { CheckCircle2, Copy, Check, ArrowRight, ShieldCheck, FileCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useModalA11y } from "@/components/ui/use-modal-a11y";
 
 export interface AcknowledgmentReceiptModalProps {
   isOpen: boolean;
@@ -33,6 +34,13 @@ export function AcknowledgmentReceiptModal({
   const router = useRouter();
   const [copiedReceipt, setCopiedReceipt] = React.useState(false);
   const [copiedHash, setCopiedHash] = React.useState(false);
+  const modalRef = React.useRef<HTMLDivElement>(null);
+
+  useModalA11y({
+    isOpen,
+    onClose,
+    containerRef: modalRef,
+  });
 
   if (!isOpen) return null;
 
@@ -64,6 +72,7 @@ export function AcknowledgmentReceiptModal({
 
   return (
     <div
+      ref={modalRef}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in"
       role="dialog"
       aria-modal="true"
