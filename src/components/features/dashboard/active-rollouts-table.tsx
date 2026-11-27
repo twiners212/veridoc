@@ -145,6 +145,7 @@ export function ActiveRolloutsTable({
 
           {/* Group Filter */}
           <select
+            aria-label="Filter by target audience group"
             value={selectedGroup}
             onChange={(e) => setSelectedGroup(e.target.value)}
             className="bg-muted/50 border border-border text-foreground text-xs rounded px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
@@ -160,6 +161,7 @@ export function ActiveRolloutsTable({
 
           {/* Lifecycle Filter */}
           <select
+            aria-label="Filter by lifecycle state"
             value={selectedState}
             onChange={(e) => setSelectedState(e.target.value)}
             className="bg-muted/50 border border-border text-foreground text-xs rounded px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
@@ -265,7 +267,7 @@ export function ActiveRolloutsTable({
                         <div className="flex flex-col min-w-0">
                           <Link
                             href={`/documents/${row.documentId}`}
-                            className="font-medium text-foreground hover:text-primary transition-colors line-clamp-1"
+                            className="font-medium text-foreground hover:text-primary dark:hover:text-blue-400 transition-colors line-clamp-1"
                           >
                             {row.title}
                           </Link>
@@ -327,7 +329,7 @@ export function ActiveRolloutsTable({
                               className={cn(
                                 "font-semibold",
                                 is100 && "text-emerald-700 dark:text-emerald-400",
-                                isLow && "text-destructive",
+                                isLow && "text-destructive dark:text-red-400",
                                 !is100 && !isLow && "text-foreground"
                               )}
                             >

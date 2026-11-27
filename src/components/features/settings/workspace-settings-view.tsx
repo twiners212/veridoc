@@ -89,7 +89,7 @@ export function WorkspaceSettingsView({
               onClick={() => setActiveTab("MEMBERS")}
               className={`flex items-center space-x-2 border-b-2 py-3 transition-colors ${
                 activeTab === "MEMBERS"
-                  ? "border-primary text-primary font-semibold"
+                  ? "border-primary text-primary dark:border-blue-400 dark:text-blue-400 font-semibold"
                   : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"
               }`}
             >
@@ -102,7 +102,7 @@ export function WorkspaceSettingsView({
               onClick={() => setActiveTab("GROUPS")}
               className={`flex items-center space-x-2 border-b-2 py-3 transition-colors ${
                 activeTab === "GROUPS"
-                  ? "border-primary text-primary font-semibold"
+                  ? "border-primary text-primary dark:border-blue-400 dark:text-blue-400 font-semibold"
                   : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"
               }`}
             >
@@ -115,7 +115,7 @@ export function WorkspaceSettingsView({
               onClick={() => setActiveTab("GOVERNANCE")}
               className={`flex items-center space-x-2 border-b-2 py-3 transition-colors ${
                 activeTab === "GOVERNANCE"
-                  ? "border-primary text-primary font-semibold"
+                  ? "border-primary text-primary dark:border-blue-400 dark:text-blue-400 font-semibold"
                   : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"
               }`}
             >

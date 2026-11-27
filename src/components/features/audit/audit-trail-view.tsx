@@ -238,7 +238,7 @@ export function AuditTrailView({
           }`}
         >
           {toastNotification.variant === "error" ? (
-            <AlertTriangle className="h-5 w-5 text-destructive shrink-0" />
+            <AlertTriangle className="h-5 w-5 text-destructive dark:text-red-400 shrink-0" />
           ) : (
             <ShieldCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
           )}
@@ -267,7 +267,7 @@ export function AuditTrailView({
               Governance Audit Trail
             </h1>
             {chainStatus === "FAILED" ? (
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-destructive/10 text-destructive border border-destructive/30">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-destructive/10 text-destructive border border-destructive/30 dark:bg-red-500/15 dark:text-red-400 dark:border-red-500/40">
                 <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
                 <span className="text-xs font-semibold">
                   Hash Chain Verification Failed
@@ -319,7 +319,7 @@ export function AuditTrailView({
             className="gap-1.5 text-xs font-medium"
           >
             <CheckCircle2
-              className={`h-4 w-4 text-primary ${
+              className={`h-4 w-4 text-primary dark:text-blue-400 ${
                 isVerifying ? "animate-spin" : ""
               }`}
             />
@@ -376,8 +376,10 @@ export function AuditTrailView({
           </span>
           <div className="h-3 w-px bg-border hidden sm:block" />
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <span>Rows:</span>
+            <label htmlFor="audit-rows-per-page">Rows:</label>
             <select
+              id="audit-rows-per-page"
+              aria-label="Rows per page"
               value={limit}
               onChange={(e) => {
                 hasInteractedRef.current = true;
@@ -460,7 +462,7 @@ export function AuditTrailView({
                 onClick={() => handleExport("json")}
                 className="p-4 rounded-lg border border-border hover:border-primary/60 hover:bg-primary/5 transition-all flex flex-col items-center gap-2 text-center group"
               >
-                <FileSpreadsheet className="h-6 w-6 text-primary group-hover:scale-105 transition-transform" />
+                <FileSpreadsheet className="h-6 w-6 text-primary dark:text-blue-400 group-hover:scale-105 transition-transform" />
                 <span className="text-xs font-semibold text-foreground">
                   JSON Data Packet
                 </span>
@@ -474,7 +476,7 @@ export function AuditTrailView({
                 onClick={() => handleExport("pdf")}
                 className="p-4 rounded-lg border border-border hover:border-primary/60 hover:bg-primary/5 transition-all flex flex-col items-center gap-2 text-center group"
               >
-                <FileText className="h-6 w-6 text-primary group-hover:scale-105 transition-transform" />
+                <FileText className="h-6 w-6 text-primary dark:text-blue-400 group-hover:scale-105 transition-transform" />
                 <span className="text-xs font-semibold text-foreground">
                   PDF Governance Document
                 </span>

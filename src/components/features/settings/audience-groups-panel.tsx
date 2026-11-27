@@ -123,10 +123,11 @@ export function AudienceGroupsPanel({
             <form onSubmit={handleCreate} className="space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-foreground mb-1">
+                  <label htmlFor="audience-group-name" className="block text-xs font-medium text-foreground mb-1">
                     Group Name <span className="text-destructive">*</span>
                   </label>
                   <Input
+                    id="audience-group-name"
                     type="text"
                     required
                     value={name}
@@ -136,10 +137,11 @@ export function AudienceGroupsPanel({
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-foreground mb-1">
+                  <label htmlFor="audience-group-type" className="block text-xs font-medium text-foreground mb-1">
                     Group Type
                   </label>
                   <select
+                    id="audience-group-type"
                     value={groupType}
                     onChange={(e) =>
                       setGroupType(

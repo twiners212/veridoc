@@ -196,7 +196,7 @@ export function KpiStrip({ kpis, onFilterOverdue, className }: KpiStripProps) {
             <span
               className={cn(
                 "text-3xl font-bold tracking-tight",
-                kpis.overdueAcknowledgments > 0 ? "text-destructive" : "text-foreground"
+                kpis.overdueAcknowledgments > 0 ? "text-destructive dark:text-red-400" : "text-foreground"
               )}
             >
               {kpis.overdueAcknowledgments}
@@ -218,7 +218,7 @@ export function KpiStrip({ kpis, onFilterOverdue, className }: KpiStripProps) {
             <button
               type="button"
               onClick={onFilterOverdue}
-              className="text-primary hover:underline font-semibold inline-flex items-center gap-0.5 cursor-pointer"
+              className="text-primary dark:text-blue-400 hover:underline font-semibold inline-flex items-center gap-0.5 cursor-pointer"
             >
               <span>Filter</span>
               <ArrowRight className="h-3 w-3" />

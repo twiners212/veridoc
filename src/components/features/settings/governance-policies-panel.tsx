@@ -69,7 +69,7 @@ export function GovernancePoliciesPanel({
           }`}
         >
           {feedback.type === "success" ? (
-            <Check className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+            <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
           ) : (
             <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
           )}
@@ -82,7 +82,7 @@ export function GovernancePoliciesPanel({
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-start space-x-3">
-              <div className="p-2 rounded bg-amber-500/10 text-amber-600 shrink-0 mt-0.5">
+              <div className="p-2 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5">
                 <ShieldAlert className="h-5 w-5" />
               </div>
               <div>
@@ -137,7 +137,7 @@ export function GovernancePoliciesPanel({
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-start space-x-3">
-              <div className="p-2 rounded bg-primary/10 text-primary shrink-0 mt-0.5">
+              <div className="p-2 rounded bg-primary/10 text-primary dark:bg-blue-500/15 dark:text-blue-400 shrink-0 mt-0.5">
                 <KeyRound className="h-5 w-5" />
               </div>
               <div>

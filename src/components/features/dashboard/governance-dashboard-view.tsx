@@ -267,7 +267,7 @@ export function GovernanceDashboardView({
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2">
           <div className="space-y-1">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-primary font-bold bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-primary dark:text-blue-300 font-bold bg-primary/10 dark:bg-blue-500/15 px-2 py-0.5 rounded border border-primary/20 dark:border-blue-500/30">
                 {tenantName} • Governance Workspace
               </span>
               <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">

@@ -1,6 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { NextRequest } from "next/server";
-import nextConfig, { securityHeaders } from "../../../next.config";
+import nextConfig, {
+  buildContentSecurityPolicy,
+  getSecurityHeaders,
+  securityHeaders,
+} from "../../../next.config";
 import { middleware } from "../../../src/middleware";
 
 describe("Production Security Headers (DEC-07, §8.1)", () => {
@@ -43,6 +47,27 @@ describe("Production Security Headers (DEC-07, §8.1)", () => {
     expect(value).toContain("frame-src 'self' blob: https://*.supabase.co");
     expect(value).toContain("object-src 'self' blob: https://*.supabase.co");
     expect(value).toContain("frame-ancestors 'none'");
+  });
+
+  it("should omit 'unsafe-eval' in production CSP and allow it only in non-production CSP", () => {
+    const prodCsp = buildContentSecurityPolicy(true);
+    expect(prodCsp).toContain("script-src 'self' 'unsafe-inline'");
+    expect(prodCsp).not.toContain("'unsafe-eval'");
+
+    const prodHeaders = getSecurityHeaders(true);
+    const prodCspHeader = prodHeaders.find(
+      (h) => h.key === "Content-Security-Policy"
+    );
+    expect(prodCspHeader?.value).not.toContain("'unsafe-eval'");
+
+    const devCsp = buildContentSecurityPolicy(false);
+    expect(devCsp).toContain("script-src 'self' 'unsafe-inline' 'unsafe-eval'");
+
+    const devHeaders = getSecurityHeaders(false);
+    const devCspHeader = devHeaders.find(
+      (h) => h.key === "Content-Security-Policy"
+    );
+    expect(devCspHeader?.value).toContain("'unsafe-eval'");
   });
 
   it("should return security headers array for all routes (/:path*) in nextConfig.headers()", async () => {

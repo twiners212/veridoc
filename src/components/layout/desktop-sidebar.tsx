@@ -273,14 +273,14 @@ export function DesktopSidebar({
         {isCollapsed ? (
           <span
             title={`Active Role: ${role.replace(/_/g, " ")}`}
-            className="inline-flex h-6 min-w-10 items-center justify-center rounded bg-primary/15 px-2 font-mono text-[10px] font-bold text-primary"
+            className="inline-flex h-6 min-w-10 items-center justify-center rounded bg-primary/15 px-2 font-mono text-[10px] font-bold text-primary dark:bg-blue-500/20 dark:text-blue-300"
           >
             {ROLE_SHORT_CODE[role]}
           </span>
         ) : (
           <div className="flex items-center justify-between text-xs gap-2">
             <span className="text-muted-foreground font-medium shrink-0">Active Role</span>
-            <span className="rounded bg-primary/15 px-2 py-0.5 font-semibold text-primary text-[10px] truncate">
+            <span className="rounded bg-primary/15 px-2 py-0.5 font-semibold text-primary dark:bg-blue-500/20 dark:text-blue-300 text-[10px] truncate">
               {role.replace(/_/g, " ")}
             </span>
           </div>
@@ -354,7 +354,7 @@ export function DesktopSidebar({
                         "ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold",
                         isActive
                           ? "bg-white/95 text-blue-700"
-                          : "bg-destructive/10 text-destructive"
+                          : "bg-destructive/10 text-destructive dark:bg-red-500/15 dark:text-red-400"
                       )}
                     >
                       {item.badge}
@@ -379,7 +379,7 @@ export function DesktopSidebar({
 
           <div
             title={userName ? `${userName}${userEmail ? ` (${userEmail})` : ""}` : "Active User"}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-gradient-subtle border border-primary/25 text-xs font-bold text-primary select-none"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-gradient-subtle border border-primary/25 text-xs font-bold text-primary dark:text-blue-300 select-none"
           >
             {userName ? userName.charAt(0).toUpperCase() : <User className="h-4 w-4" />}
           </div>

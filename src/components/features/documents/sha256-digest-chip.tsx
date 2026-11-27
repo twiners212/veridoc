@@ -127,7 +127,7 @@ export function Sha256DigestChip({
         >
           <div className="flex items-center justify-between pb-2 border-b border-border">
             <div className="flex items-center gap-1.5">
-              <ShieldCheck className="h-4 w-4 text-emerald-600" />
+              <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
               <span className="text-xs font-semibold text-foreground">
                 SHA-256 Digest Verified
               </span>

@@ -153,7 +153,7 @@ export function ActivityFeed({
               return (
                 <div key={evt.id} className="relative group">
                   {/* Timeline icon node */}
-                  <div className="absolute -left-6 top-0.5 w-4 h-4 rounded-full bg-card text-primary flex items-center justify-center ring-4 ring-card border border-border">
+                  <div className="absolute -left-6 top-0.5 w-4 h-4 rounded-full bg-card text-primary dark:text-blue-400 flex items-center justify-center ring-4 ring-card border border-border">
                     <Icon className={cn("h-2.5 w-2.5", badge.iconColor)} />
                   </div>
 
@@ -193,7 +193,7 @@ export function ActivityFeed({
                         >
                           <span>SHA: {evt.documentSha256.slice(0, 6)}…{evt.documentSha256.slice(-3)}</span>
                           {copiedHash === evt.documentSha256 ? (
-                            <Check className="h-2.5 w-2.5 text-emerald-600" />
+                            <Check className="h-2.5 w-2.5 text-emerald-600 dark:text-emerald-400" />
                           ) : (
                             <Copy className="h-2.5 w-2.5" />
                           )}
@@ -211,7 +211,7 @@ export function ActivityFeed({
         <div className="pt-4 mt-4 border-t border-border flex items-center justify-between">
           <Link
             href="/audit"
-            className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
+            className="text-xs font-semibold text-primary dark:text-blue-400 hover:underline flex items-center gap-1"
           >
             <span>View complete audit trail</span>
             <ArrowRight className="h-3 w-3" />
@@ -229,7 +229,7 @@ export function ActivityFeed({
             <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
             <h3 className="text-xs font-semibold text-foreground">Cryptographic Integrity Status</h3>
           </div>
-          <ShieldCheck className="h-4 w-4 text-emerald-600" />
+          <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
         </div>
         <p className="text-xs text-muted-foreground">
           Append-Only Hash-Chained Audit Trail active. All SOP revisions, signature events, and read confirmations are sealed with SHA-256 state anchors.
@@ -241,12 +241,12 @@ export function ActivityFeed({
             <button
               type="button"
               onClick={() => handleCopy(merkleRoot)}
-              className="text-foreground font-semibold hover:text-primary transition-colors flex items-center gap-1"
+              className="text-foreground font-semibold hover:text-primary dark:hover:text-blue-400 transition-colors flex items-center gap-1"
               title="Copy root hash"
             >
               <span>{merkleRoot.slice(0, 6)}…{merkleRoot.slice(-4)}</span>
               {copiedHash === merkleRoot ? (
-                <Check className="h-3 w-3 text-emerald-600" />
+                <Check className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
               ) : (
                 <Copy className="h-3 w-3 text-muted-foreground" />
               )}
@@ -274,7 +274,7 @@ export function ActivityFeed({
             type="button"
             onClick={handleVerifyChain}
             disabled={isVerifyingChain}
-            className="text-primary hover:underline font-semibold cursor-pointer disabled:opacity-50"
+            className="text-primary dark:text-blue-400 hover:underline font-semibold cursor-pointer disabled:opacity-50"
           >
             {isVerifyingChain ? "Verifying..." : "Re-verify Chain"}
           </button>
@@ -302,7 +302,7 @@ export function ActivityFeed({
               <span className="font-mono text-[10px] text-amber-800 dark:text-amber-300">BR-APP-04 Triggered</span>
               <Link
                 href="/approvals"
-                className="text-xs font-semibold text-primary hover:underline flex items-center gap-0.5"
+                className="text-xs font-semibold text-primary dark:text-blue-400 hover:underline flex items-center gap-0.5"
               >
                 <span>Request Admin Override</span>
                 <ArrowRight className="h-3 w-3" />

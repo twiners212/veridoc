@@ -57,7 +57,7 @@ export function ReaderAcknowledgmentBar({
                 <span>Reading Requirements Fulfilled</span>
               </span>
             ) : (
-              <span className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-medium">
+              <span className="flex items-center gap-1.5 text-amber-800 dark:text-amber-300 font-medium">
                 <Clock className="h-3.5 w-3.5 shrink-0 animate-pulse" />
                 <span>
                   Scroll: {Math.min(100, Math.round(scrollPercent))}%/{requiredScrollPercent}% • Time: {dwellTimeSeconds}s/{requiredDwellSeconds}s
@@ -87,6 +87,7 @@ export function ReaderAcknowledgmentBar({
         <div
           className="w-full h-1.5 bg-muted rounded-full overflow-hidden"
           role="progressbar"
+          aria-label="Reading acknowledgment progress"
           aria-valuenow={effectiveProgressPercent}
           aria-valuemin={0}
           aria-valuemax={100}

@@ -180,6 +180,7 @@ export function DocumentsTable({
           {categoryOptions.length > 0 && (
             <div className="relative">
               <select
+                aria-label="Filter by category"
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="h-8 rounded border border-border bg-background px-2.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
@@ -241,10 +242,10 @@ export function DocumentsTable({
                     <td className="px-2.5 2xl:px-4 py-3 whitespace-nowrap">
                       <Link
                         href={`/documents/${doc.id}`}
-                        className="inline-flex items-center gap-1.5 font-mono text-xs font-bold text-foreground hover:text-primary transition-colors"
+                        className="inline-flex items-center gap-1.5 font-mono text-xs font-bold text-foreground hover:text-primary dark:hover:text-blue-400 transition-colors"
                       >
                         <span>{doc.documentCode}</span>
-                        <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity text-primary" />
+                        <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity text-primary dark:text-blue-400" />
                       </Link>
                     </td>
 
@@ -252,7 +253,7 @@ export function DocumentsTable({
                     <td className="px-2.5 2xl:px-4 py-3 min-w-0 max-w-[190px] 2xl:max-w-[260px]">
                       <Link
                         href={`/documents/${doc.id}`}
-                        className="font-medium text-foreground hover:text-primary transition-colors block truncate"
+                        className="font-medium text-foreground hover:text-primary dark:hover:text-blue-400 transition-colors block truncate"
                       >
                         {doc.title}
                       </Link>

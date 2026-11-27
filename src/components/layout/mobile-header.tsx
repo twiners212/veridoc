@@ -54,7 +54,7 @@ export function MobileHeader({
       <div className="flex shrink-0 items-center gap-1.5">
         <ThemeToggle />
         <div className="flex flex-col items-end">
-          <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+          <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary dark:bg-blue-500/15 dark:text-blue-300">
             {role.replace(/_/g, " ")}
           </span>
           {userName && (

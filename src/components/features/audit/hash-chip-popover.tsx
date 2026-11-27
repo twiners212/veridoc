@@ -81,13 +81,13 @@ export function HashChipPopover({
         <div className="absolute left-0 bottom-full mb-2 z-50 w-80 p-3 rounded-lg shadow-xl bg-popover text-popover-foreground border border-border text-xs flex flex-col gap-2">
           <div className="flex items-center justify-between border-b border-border pb-1.5">
             <span className="font-semibold text-[11px] uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-              <LinkIcon className="h-3 w-3 text-primary" />
+              <LinkIcon className="h-3 w-3 text-primary dark:text-blue-400" />
               <span>Block #{sequenceNumber} SHA-256 Digest</span>
             </span>
             <button
               type="button"
               onClick={handleCopy}
-              className="text-[11px] text-primary hover:underline flex items-center gap-1 font-medium"
+              className="text-[11px] text-primary dark:text-blue-400 hover:underline flex items-center gap-1 font-medium"
             >
               {copied ? "Copied!" : "Copy"}
             </button>

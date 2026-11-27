@@ -104,7 +104,7 @@ export function AuditTable({ items, isLoading }: AuditTableProps) {
                   }`}
                 >
                   {/* 1. Seq # */}
-                  <td className="py-2.5 px-2.5 2xl:px-3.5 font-mono text-xs font-semibold text-primary whitespace-nowrap">
+                  <td className="py-2.5 px-2.5 2xl:px-3.5 font-mono text-xs font-semibold text-primary dark:text-blue-400 whitespace-nowrap">
                     #{item.sequenceNumber}
                   </td>
 
@@ -141,7 +141,7 @@ export function AuditTable({ items, isLoading }: AuditTableProps) {
                   {/* 5. Actor & Role */}
                   <td className="py-2.5 px-2.5 2xl:px-3.5 min-w-0 max-w-[160px]">
                     <div className="flex items-center gap-2 min-w-0">
-                      <div className="w-6 h-6 rounded-full bg-primary/10 text-primary text-[10px] font-bold flex items-center justify-center shrink-0">
+                      <div className="w-6 h-6 rounded-full bg-primary/10 text-primary dark:bg-blue-500/15 dark:text-blue-300 text-[10px] font-bold flex items-center justify-center shrink-0">
                         {getInitials(item.actorName)}
                       </div>
                       <div className="flex flex-col min-w-0">

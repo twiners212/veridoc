@@ -31,7 +31,7 @@ export function QuotaCapacityStrip({
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-2 flex-wrap">
             <div className="flex items-center space-x-2 min-w-0">
-              <div className="p-2 rounded bg-primary/10 text-primary shrink-0">
+              <div className="p-2 rounded bg-primary/10 text-primary dark:bg-blue-500/15 dark:text-blue-400 shrink-0">
                 <Users className="h-5 w-5" />
               </div>
               <div className="min-w-0">
@@ -41,7 +41,7 @@ export function QuotaCapacityStrip({
                 </CardDescription>
               </div>
             </div>
-            <Badge variant="outline" className="text-xs font-semibold bg-primary/5 text-primary border-primary/20 shrink-0">
+            <Badge variant="outline" className="text-xs font-semibold bg-primary/5 text-primary border-primary/20 dark:bg-blue-500/15 dark:text-blue-300 dark:border-blue-500/30 shrink-0">
               High Privilege
             </Badge>
           </div>
@@ -73,7 +73,7 @@ export function QuotaCapacityStrip({
 
           <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
             <span className="flex items-center space-x-1">
-              <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+              <ShieldCheck className="h-3.5 w-3.5 text-primary dark:text-blue-400" />
               <span>Cryptographic signature eligible</span>
             </span>
             <span className="font-medium text-foreground">
@@ -133,7 +133,7 @@ export function QuotaCapacityStrip({
 
           <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
             <span className="flex items-center space-x-1">
-              <Zap className="h-3.5 w-3.5 text-emerald-600" />
+              <Zap className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>Zero per-seat markup on frontline staff</span>
             </span>
             <span className="font-medium text-foreground">

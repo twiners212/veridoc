@@ -42,7 +42,7 @@ export function TopUtilityBar({
       <div className="flex items-center space-x-2.5 sm:space-x-3">
         <ThemeToggle />
         {role && (
-          <span className="hidden sm:inline-flex items-center rounded-full bg-brand-gradient-subtle border border-primary/20 px-2.5 py-0.5 text-xs font-medium text-primary">
+          <span className="hidden sm:inline-flex items-center rounded-full bg-brand-gradient-subtle border border-primary/20 px-2.5 py-0.5 text-xs font-medium text-primary dark:text-blue-300">
             {role.replace(/_/g, " ")}
           </span>
         )}
