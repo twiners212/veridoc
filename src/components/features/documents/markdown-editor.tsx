@@ -312,11 +312,11 @@ export function MarkdownEditor({
         {/* Live Sanitized Preview Area */}
         {(viewMode === "preview" || (viewMode === "split" && !readOnly)) && (
           <div
-            className="flex flex-col h-full bg-slate-50/40 p-5 overflow-y-auto"
+            className="flex flex-col h-full bg-slate-50/40 dark:bg-muted/30 p-5 overflow-y-auto"
             style={{ minHeight }}
           >
             <div className="flex items-center gap-1.5 pb-3 mb-3 border-b border-border/60 text-xs font-medium text-muted-foreground">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+              <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>Sanitized Preview (rehype-sanitize active)</span>
             </div>
             {value.trim() === "" ? (
@@ -324,7 +324,7 @@ export function MarkdownEditor({
                 No content to preview yet. Start typing to see rendered SOP markdown.
               </div>
             ) : (
-              <div className="prose prose-slate max-w-none text-foreground text-sm leading-6 space-y-4">
+              <div className="prose prose-slate dark:prose-invert max-w-none text-foreground text-sm leading-6 space-y-4">
                 <Markdown
                   rehypePlugins={[rehypeSanitize]}
                   components={{
