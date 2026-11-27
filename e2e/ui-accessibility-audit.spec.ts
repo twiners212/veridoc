@@ -22,7 +22,8 @@ async function applyThemeMode(page: Page, mode: ThemeMode): Promise<void> {
     window.localStorage.setItem("veridoc-theme", theme);
     window.dispatchEvent(new CustomEvent("veridoc-theme-change"));
   }, mode);
-  await page.waitForTimeout(50);
+  // Wait for Tailwind CSS transition-colors (150ms) and theme transitions to settle
+  await page.waitForTimeout(350);
 }
 
 async function auditRoute(
@@ -69,6 +70,8 @@ async function auditRoute(
       `Horizontal overflow detected on ${taggedLabel}: scrollWidth=${overflow.scrollWidth} > innerWidth=${overflow.innerWidth}`
     ).toBeLessThanOrEqual(overflow.innerWidth);
   }
+
+  await applyThemeMode(page, "light");
 
   for (const label of options.checkRightEdgeButtons ?? []) {
     const cta = page.locator("button, a", { hasText: label }).first();
