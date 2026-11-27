@@ -271,14 +271,18 @@ test.describe("Slice 1 Acceptance Criteria (AC-01 through AC-05)", () => {
     await expect(
       page.locator("h1", { hasText: "Controlled Documents" })
     ).toBeVisible();
-    await expect(page.locator(`text=${e2ePendingCode}`).first()).toBeVisible();
+    await expect(
+      page.locator(`text=${e2ePendingCode} >> visible=true`).first()
+    ).toBeVisible();
     await expect(page.locator("text=SOP-ENG-104").first()).toBeVisible();
     await expect(page.locator("text=SOP-MFG-001").first()).toBeVisible();
 
     await page.locator("a", { hasText: e2ePendingCode }).first().click();
     await page.waitForURL(/\/documents\/[0-9a-f-]+/i, { timeout: 15000 });
 
-    await expect(page.locator(`text=${e2ePendingCode}`).first()).toBeVisible();
+    await expect(
+      page.locator(`text=${e2ePendingCode} >> visible=true`).first()
+    ).toBeVisible();
     await expect(
       page.locator("select[title='Select version revision']")
     ).toBeVisible();
