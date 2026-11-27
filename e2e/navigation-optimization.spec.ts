@@ -7,6 +7,7 @@ import postgres from "postgres";
 import { test, expect } from "@playwright/test";
 import * as schema from "../src/db/schema";
 import { DEMO_ACCOUNTS, DEMO_TENANT } from "../src/lib/auth/demo-accounts";
+import { assertSafeE2eDatabaseUrl } from "./helpers/e2e-db-guard";
 
 config({ path: ".env.local" });
 config();
@@ -66,6 +67,7 @@ test.describe("Navigation Optimization & Shared Layout (SSR + Client Transitions
       )
       .digest("hex");
 
+    assertSafeE2eDatabaseUrl(connectionString);
     const client = postgres(connectionString, { prepare: false, max: 1 });
     const db = drizzle(client, { schema });
     try {
@@ -189,6 +191,7 @@ test.describe("Navigation Optimization & Shared Layout (SSR + Client Transitions
       process.env.DIRECT_DATABASE_URL || process.env.DATABASE_URL;
     if (!connectionString) return;
 
+    assertSafeE2eDatabaseUrl(connectionString);
     const client = postgres(connectionString, { prepare: false, max: 1 });
     const db = drizzle(client, { schema });
     try {
@@ -372,6 +375,7 @@ test.describe("Navigation Optimization & Shared Layout (SSR + Client Transitions
     if (!connectionString) {
       throw new Error("Missing DIRECT_DATABASE_URL or DATABASE_URL");
     }
+    assertSafeE2eDatabaseUrl(connectionString);
     const client = postgres(connectionString, { prepare: false, max: 1 });
     const db = drizzle(client, { schema });
     try {

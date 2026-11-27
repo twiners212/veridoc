@@ -115,6 +115,7 @@ export interface AuditStatsResult {
   totalEntries: number;
   headHash: string | null;
   chainVerified?: boolean;
+  failedSequenceNumber?: number;
 }
 
 /**

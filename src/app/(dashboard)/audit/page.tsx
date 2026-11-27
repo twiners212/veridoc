@@ -47,6 +47,8 @@ export default async function AuditPage() {
     readAttestations: bundle.stats.readAttestations,
     totalEntries: bundle.stats.totalEntries,
     headHash: bundle.stats.headHash,
+    chainVerified: bundle.stats.chainVerified,
+    failedSequenceNumber: bundle.stats.failedSequenceNumber,
   };
 
   return (

@@ -1,7 +1,7 @@
 import { config } from "dotenv";
 import { createHash } from "node:crypto";
 import { hashPassword } from "better-auth/crypto";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { DEMO_ACCOUNTS, DEMO_PASSWORD, DEMO_TENANT } from "../src/lib/auth/demo-accounts";
@@ -94,11 +94,207 @@ const IDS = {
   verPublished3: "e0000000-0000-4000-8000-000000000006",
   cyclePublished3: "f0000000-0000-4000-8000-000000000006",
   stepPublished3: "f1000000-0000-4000-8000-000000000061",
+  docPublished4: "d0000000-0000-4000-8000-000000000007",
+  verPublished4: "e0000000-0000-4000-8000-000000000007",
+  cyclePublished4: "f0000000-0000-4000-8000-000000000007",
+  stepPublished4: "f1000000-0000-4000-8000-000000000071",
   assignReader1: "f2000000-0000-4000-8000-000000000001",
   assignReader2: "f2000000-0000-4000-8000-000000000002",
   assignReader3: "f2000000-0000-4000-8000-000000000004",
+  assignReader4: "f2000000-0000-4000-8000-000000000005",
   assignQm1: "f2000000-0000-4000-8000-000000000003",
 } as const;
+
+function buildDemoSafetyPdfBuffer(): Buffer {
+  const streamLines = [
+    "BT",
+    "/F2 14 Tf 50 740 Td (VeriDoc Controlled SOP - SOP-SAF-402 v1.0) Tj",
+    "/F1 11 Tf 0 -22 Td (Emergency Eyewash & Safety Shower Inspection Guide) Tj",
+    "0 -22 Td (1. Purpose: Weekly activation and annual ANSI/ISEA Z358.1 flow verification.) Tj",
+    "0 -18 Td (2. Weekly Flush: Activate plumbed units for 3 minutes until water runs clear.) Tj",
+    "0 -18 Td (3. Tepid Water: Confirm supply temperature remains between 16C and 38C.) Tj",
+    "0 -18 Td (4. Unobstructed Access: Maintain 10-second travel path free of hazards.) Tj",
+    "0 -18 Td (5. Records: Log inspection date, unit tag, and inspector initials.) Tj",
+    "ET",
+  ].join("\n");
+
+  const streamByteLength = Buffer.byteLength(streamLines, "latin1");
+  const objects = [
+    "1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n",
+    "2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n",
+    "3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>\nendobj\n",
+    "4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>\nendobj\n",
+    "5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>\nendobj\n",
+    `6 0 obj\n<< /Length ${streamByteLength} >>\nstream\n${streamLines}\nendstream\nendobj\n`,
+  ];
+
+  let pdf = "%PDF-1.4\n";
+  const offsets: number[] = [];
+  for (const obj of objects) {
+    offsets.push(Buffer.byteLength(pdf, "latin1"));
+    pdf += obj;
+  }
+
+  const xrefOffset = Buffer.byteLength(pdf, "latin1");
+  pdf += `xref\n0 ${objects.length + 1}\n`;
+  pdf += "0000000000 65535 f \n";
+  for (const offset of offsets) {
+    pdf += `${String(offset).padStart(10, "0")} 00000 n \n`;
+  }
+  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF\n`;
+
+  return Buffer.from(pdf, "latin1");
+}
+
+function getConfiguredSupabaseStorage(): {
+  supabaseUrl: string;
+  serviceRoleKey: string;
+  bucket: string;
+} | null {
+  const rawUrl = (
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.SUPABASE_URL ||
+    ""
+  ).trim();
+  const rawKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || "").trim();
+  const bucket = (
+    process.env.SUPABASE_STORAGE_BUCKET || "veridoc-controlled-docs"
+  ).trim();
+
+  if (!rawUrl || !rawKey) return null;
+  const lowerUrl = rawUrl.toLowerCase();
+  const lowerKey = rawKey.toLowerCase();
+  if (
+    lowerUrl.includes("placeholder") ||
+    lowerUrl.includes("your_project_id") ||
+    lowerKey.includes("placeholder") ||
+    lowerKey.includes("your_") ||
+    rawKey === "sb_secret_..." ||
+    rawKey.endsWith("...")
+  ) {
+    return null;
+  }
+
+  return {
+    supabaseUrl: rawUrl.replace(/\/+$/, ""),
+    serviceRoleKey: rawKey,
+    bucket,
+  };
+}
+
+async function uploadDemoPdfToStorage(params: {
+  supabaseUrl: string;
+  serviceRoleKey: string;
+  bucket: string;
+  storageKey: string;
+  pdfBuffer: Buffer;
+}): Promise<void> {
+  const endpoint = `${params.supabaseUrl}/storage/v1/object/${params.bucket}/${params.storageKey}`;
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${params.serviceRoleKey}`,
+      apikey: params.serviceRoleKey,
+      "Content-Type": "application/pdf",
+      "x-upsert": "true",
+    },
+    body: new Uint8Array(params.pdfBuffer),
+    signal: AbortSignal.timeout(30000),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => "");
+    throw new Error(
+      `Failed to upload demo PDF to Supabase Storage (${response.status}): ${errorText}`
+    );
+  }
+}
+
+async function repairDemoAuditLedger(
+  db: ReturnType<typeof drizzle<typeof schema>>,
+  salt: string
+): Promise<void> {
+  if (process.env.CONFIRM_REPAIR_DEMO_AUDIT !== "true") {
+    throw new Error(
+      'Refusing to run --repair-demo-audit without CONFIRM_REPAIR_DEMO_AUDIT="true".'
+    );
+  }
+
+  await db.transaction(async (tx) => {
+    await tx.execute(sql`SET LOCAL session_replication_role = 'replica'`);
+    await tx.execute(
+      sql`SELECT pg_advisory_xact_lock(hashtext(${DEMO_TENANT.id}::text))`
+    );
+
+    const rows = await tx
+      .select({
+        id: schema.auditLogs.id,
+        tenantId: schema.auditLogs.tenantId,
+        sequenceNumber: schema.auditLogs.sequenceNumber,
+        eventType: schema.auditLogs.eventType,
+        entityId: schema.auditLogs.entityId,
+        payloadJson: schema.auditLogs.payloadJson,
+      })
+      .from(schema.auditLogs)
+      .where(eq(schema.auditLogs.tenantId, DEMO_TENANT.id))
+      .orderBy(
+        asc(schema.auditLogs.sequenceNumber),
+        asc(schema.auditLogs.createdAt)
+      );
+
+    if (rows.length === 0) {
+      console.log(
+        `No audit_logs rows found for demo tenant '${DEMO_TENANT.name}' (${DEMO_TENANT.id}).`
+      );
+      return;
+    }
+
+    // Two-pass re-sequence avoids transient uq_audit_logs_tenant_seq collisions while preserving chk_sequence_number (>= 1)
+    const maxSeq = rows.reduce(
+      (max, row) => Math.max(max, row.sequenceNumber),
+      0
+    );
+    const offset = maxSeq + 1000;
+    await tx.execute(
+      sql`UPDATE veridoc.audit_logs SET sequence_number = sequence_number + ${offset} WHERE tenant_id = ${DEMO_TENANT.id}`
+    );
+
+    let prevHash = "0".repeat(64);
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const newSeq = i + 1;
+      const entryHash = computeAuditHash({
+        salt,
+        prevHash,
+        tenantId: row.tenantId,
+        sequenceNumber: newSeq,
+        eventType: row.eventType,
+        entityId: row.entityId,
+        payloadJson: (row.payloadJson ?? {}) as Record<string, unknown>,
+      });
+
+      await tx
+        .update(schema.auditLogs)
+        .set({
+          sequenceNumber: newSeq,
+          prevHash,
+          entryHash,
+        })
+        .where(
+          and(
+            eq(schema.auditLogs.id, row.id),
+            eq(schema.auditLogs.tenantId, DEMO_TENANT.id)
+          )
+        );
+
+      prevHash = entryHash;
+    }
+
+    console.log(
+      `Repaired ${rows.length} audit_logs entries for demo tenant '${DEMO_TENANT.name}' (${DEMO_TENANT.id}). Head: #${rows.length} (${prevHash.slice(0, 12)}...).`
+    );
+  });
+}
 
 const LOTO_MARKDOWN = `# SOP-MFG-001: Lockout / Tagout (LOTO) Hazardous Energy Control
 
@@ -195,6 +391,13 @@ Define daily viable and non-viable particulate monitoring, surface swabbing, and
 - Action Limit: >= 15 CFU/plate — halt line release immediately and open a Quality Deviation record per SOP-QA-002.`;
 
 async function main() {
+  const isRepairDemoAudit = process.argv.includes("--repair-demo-audit");
+  if (isRepairDemoAudit && process.env.CONFIRM_REPAIR_DEMO_AUDIT !== "true") {
+    throw new Error(
+      'Refusing to run --repair-demo-audit without CONFIRM_REPAIR_DEMO_AUDIT="true".'
+    );
+  }
+
   const connectionString =
     process.env.DIRECT_DATABASE_URL || process.env.DATABASE_URL;
   if (!connectionString) {
@@ -208,6 +411,11 @@ async function main() {
   const salt = process.env.AUDIT_HASH_SALT || "";
 
   try {
+    if (isRepairDemoAudit) {
+      await repairDemoAuditLedger(db, salt);
+      return;
+    }
+
     const adminUser = DEMO_ACCOUNTS.find((a) => a.role === "WORKSPACE_ADMIN")!;
     const qmUser = DEMO_ACCOUNTS.find((a) => a.role === "QUALITY_MANAGER")!;
     const authorUser = DEMO_ACCOUNTS.find((a) => a.role === "DOCUMENT_AUTHOR")!;
@@ -355,6 +563,43 @@ async function main() {
       versionLabel: "v1.0",
     });
 
+    const pub4Title = "Emergency Eyewash & Safety Shower Inspection Guide";
+    const pub4PdfBuffer = buildDemoSafetyPdfBuffer();
+    const pub4FileSha = createHash("sha256").update(pub4PdfBuffer).digest("hex");
+    const pub4Sha = computeDocumentSha256({
+      markdownContent: null,
+      fileSha256: pub4FileSha,
+      documentCode: "SOP-SAF-402",
+      tenantId: DEMO_TENANT.id,
+      title: pub4Title,
+      versionLabel: "v1.0",
+    });
+    const pub4StorageKey = `tenants/${DEMO_TENANT.id}/documents/${IDS.docPublished4}/versions/${IDS.verPublished4}/controlled-sop.pdf`;
+
+    const [existingPub4Ver] = await db
+      .select({
+        id: schema.documentVersions.id,
+        fileStorageKey: schema.documentVersions.fileStorageKey,
+      })
+      .from(schema.documentVersions)
+      .where(eq(schema.documentVersions.id, IDS.verPublished4))
+      .limit(1);
+
+    let resolvedPub4StorageKey: string | null =
+      existingPub4Ver?.fileStorageKey ?? null;
+
+    if (!existingPub4Ver) {
+      const storageConfig = getConfiguredSupabaseStorage();
+      if (storageConfig) {
+        await uploadDemoPdfToStorage({
+          ...storageConfig,
+          storageKey: pub4StorageKey,
+          pdfBuffer: pub4PdfBuffer,
+        });
+        resolvedPub4StorageKey = pub4StorageKey;
+      }
+    }
+
     await db
       .insert(schema.documents)
       .values([
@@ -400,6 +645,13 @@ async function main() {
           category: "Quality",
           createdBy: authorUser.id,
         },
+        {
+          id: IDS.docPublished4,
+          tenantId: DEMO_TENANT.id,
+          documentCode: "SOP-SAF-402",
+          category: "Safety",
+          createdBy: authorUser.id,
+        },
       ])
       .onConflictDoNothing({ target: schema.documents.id });
 
@@ -407,6 +659,7 @@ async function main() {
     const publishedAt1 = new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000);
     const publishedAt2 = new Date(now.getTime() - 4 * 24 * 60 * 60 * 1000);
     const publishedAt3 = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
+    const publishedAt4 = new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000);
     const signedAt = new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000);
 
     await db
@@ -504,6 +757,27 @@ async function main() {
           publishedBy: qmUser.id,
           rowVersion: 3,
         },
+        {
+          id: IDS.verPublished4,
+          tenantId: DEMO_TENANT.id,
+          documentId: IDS.docPublished4,
+          versionMajor: 1,
+          versionMinor: 0,
+          title: pub4Title,
+          contentFormat: "PDF",
+          markdownContent: null,
+          fileStorageKey: resolvedPub4StorageKey,
+          fileMimeType: "application/pdf",
+          fileSizeBytes: pub4PdfBuffer.length,
+          fileSha256: pub4FileSha,
+          documentSha256: pub4Sha,
+          lifecycleState: "PUBLISHED",
+          authorId: authorUser.id,
+          effectiveDate: publishedAt4,
+          publishedAt: publishedAt4,
+          publishedBy: qmUser.id,
+          rowVersion: 3,
+        },
       ])
       .onConflictDoNothing({ target: schema.documentVersions.id });
 
@@ -564,6 +838,17 @@ async function main() {
           status: "APPROVED",
           allowSelfApprovalOverride: false,
           closedAt: publishedAt3,
+        },
+        {
+          id: IDS.cyclePublished4,
+          tenantId: DEMO_TENANT.id,
+          documentVersionId: IDS.verPublished4,
+          cycleNumber: 1,
+          submittedBy: authorUser.id,
+          submittedSha256: pub4Sha,
+          status: "APPROVED",
+          allowSelfApprovalOverride: false,
+          closedAt: publishedAt4,
         },
       ])
       .onConflictDoNothing({ target: schema.approvalCycles.id });
@@ -655,6 +940,23 @@ async function main() {
           selfApprovalOverrideUsed: false,
           actedAt: publishedAt3,
         },
+        {
+          id: IDS.stepPublished4,
+          tenantId: DEMO_TENANT.id,
+          approvalCycleId: IDS.cyclePublished4,
+          stepOrder: 1,
+          assignedApproverId: approverUser.id,
+          status: "APPROVED",
+          actedByUserId: approverUser.id,
+          actedByFullName: approverUser.name,
+          actedByRole: approverUser.role,
+          actedIpAddress: "127.0.0.1",
+          authMethod: "PASSWORD_REAUTH",
+          signedDocumentSha256: pub4Sha,
+          decisionIntent: "Approved ANSI/ISEA Z358.1 emergency eyewash & shower PDF specification.",
+          selfApprovalOverrideUsed: false,
+          actedAt: publishedAt4,
+        },
       ])
       .onConflictDoNothing({ target: schema.approvalSteps.id });
 
@@ -691,6 +993,15 @@ async function main() {
           assignedViaGroupId: IDS.groupQa,
           status: "PENDING",
           dueAt: due5d,
+        },
+        {
+          id: IDS.assignReader4,
+          tenantId: DEMO_TENANT.id,
+          documentVersionId: IDS.verPublished4,
+          userId: readerUser.id,
+          assignedViaGroupId: IDS.groupShiftA,
+          status: "PENDING",
+          dueAt: due7d,
         },
         {
           id: IDS.assignQm1,
@@ -798,6 +1109,19 @@ async function main() {
             documentSha256: pub2Sha,
           },
         },
+        {
+          eventType: "DOCUMENT_PUBLISHED",
+          entityType: "DOCUMENT_VERSION",
+          entityId: IDS.verPublished4,
+          actorUserId: qmUser.id,
+          actorRole: qmUser.role,
+          payloadJson: {
+            documentCode: "SOP-SAF-402",
+            documentVersionId: IDS.verPublished4,
+            versionLabel: "v1.0",
+            documentSha256: pub4Sha,
+          },
+        },
       ];
 
       let prevHash = "0".repeat(64);
@@ -834,7 +1158,7 @@ async function main() {
     });
 
     console.log(
-      `Seeded demo workspace '${DEMO_TENANT.name}' (${DEMO_TENANT.id}) with ${DEMO_ACCOUNTS.length} accounts and 6 sample SOPs.`
+      `Seeded demo workspace '${DEMO_TENANT.name}' (${DEMO_TENANT.id}) with ${DEMO_ACCOUNTS.length} accounts and 7 sample SOPs.`
     );
   } finally {
     await client.end();

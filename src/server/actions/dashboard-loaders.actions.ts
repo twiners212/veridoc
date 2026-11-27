@@ -16,6 +16,7 @@ import { ApprovalService } from "@/server/services/approval.service";
 import {
   getAuditLogs,
   getAuditStats,
+  verifyTenantAuditChainInTx,
   type AuditStatsResult,
   type GetAuditLogsResult,
 } from "@/server/services/audit.service";
@@ -612,11 +613,20 @@ export async function loadAuditPageBundleAction(
         return { status: "FORBIDDEN", role };
       }
 
-      const [tenantMeta, logs, stats] = await Promise.all([
+      const [tenantMeta, logs, stats, chainVerification] = await Promise.all([
         fetchTenantMeta(tx, tenantId),
         getAuditLogs(tx, { tenantId, limit: 25 }),
         getAuditStats(tx, tenantId),
+        verifyTenantAuditChainInTx(tx, tenantId),
       ]);
+
+      const enrichedStats: AuditStatsResult = {
+        ...stats,
+        chainVerified: chainVerification.verified,
+        ...(chainVerification.failedSequenceNumber !== undefined
+          ? { failedSequenceNumber: chainVerification.failedSequenceNumber }
+          : {}),
+      };
 
       return {
         status: "OK",
@@ -630,7 +640,7 @@ export async function loadAuditPageBundleAction(
           role,
         },
         logs,
-        stats,
+        stats: enrichedStats,
       };
     }
   );
