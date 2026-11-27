@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Plus, X, FileText, FileCode, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useModalA11y } from "@/components/ui/use-modal-a11y";
 import { cn } from "@/lib/utils";
 import { createDocumentAction } from "@/server/actions/documents.actions";
 
@@ -40,6 +41,14 @@ export function CreateDocumentModal({
   );
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const modalRef = React.useRef<HTMLDivElement>(null);
+
+  useModalA11y({
+    isOpen,
+    onClose,
+    disabled: isSubmitting,
+    containerRef: modalRef,
+  });
 
   if (!isOpen) return null;
 
@@ -105,8 +114,10 @@ export function CreateDocumentModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div
+        ref={modalRef}
         className="w-full max-w-lg rounded-lg border border-border bg-card p-6 shadow-xl"
         role="dialog"
+        aria-modal="true"
         aria-labelledby="create-doc-title"
       >
         <div className="flex items-center justify-between border-b border-border pb-3">
@@ -119,7 +130,9 @@ export function CreateDocumentModal({
           <button
             type="button"
             onClick={onClose}
+            disabled={isSubmitting}
             className="text-muted-foreground hover:text-foreground p-1 rounded"
+            aria-label="Close dialog"
           >
             <X className="h-4 w-4" />
           </button>
@@ -135,10 +148,11 @@ export function CreateDocumentModal({
 
           {/* Document Code */}
           <div>
-            <label className="block text-xs font-semibold text-foreground mb-1 uppercase tracking-wider">
+            <label htmlFor="create-doc-code" className="block text-xs font-semibold text-foreground mb-1 uppercase tracking-wider">
               Document Code <span className="text-destructive">*</span>
             </label>
             <Input
+              id="create-doc-code"
               type="text"
               placeholder="e.g. SOP-SAF-004"
               value={documentCode}
@@ -153,10 +167,11 @@ export function CreateDocumentModal({
 
           {/* Title */}
           <div>
-            <label className="block text-xs font-semibold text-foreground mb-1 uppercase tracking-wider">
+            <label htmlFor="create-doc-title-input" className="block text-xs font-semibold text-foreground mb-1 uppercase tracking-wider">
               Document Title <span className="text-destructive">*</span>
             </label>
             <Input
+              id="create-doc-title-input"
               type="text"
               placeholder="e.g. Chemical Handling & Spill Response Procedure"
               value={title}
@@ -168,10 +183,11 @@ export function CreateDocumentModal({
 
           {/* Category */}
           <div>
-            <label className="block text-xs font-semibold text-foreground mb-1 uppercase tracking-wider">
+            <label htmlFor="create-doc-category" className="block text-xs font-semibold text-foreground mb-1 uppercase tracking-wider">
               Category
             </label>
             <select
+              id="create-doc-category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               className="w-full h-9 rounded border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
@@ -243,10 +259,11 @@ export function CreateDocumentModal({
           {/* Initial Markdown Content (if MARKDOWN) */}
           {contentFormat === "MARKDOWN" && (
             <div>
-              <label className="block text-xs font-semibold text-foreground mb-1 uppercase tracking-wider">
+              <label htmlFor="create-doc-markdown" className="block text-xs font-semibold text-foreground mb-1 uppercase tracking-wider">
                 Initial Procedure Draft
               </label>
               <textarea
+                id="create-doc-markdown"
                 value={markdownContent}
                 onChange={(e) => setMarkdownContent(e.target.value)}
                 rows={5}

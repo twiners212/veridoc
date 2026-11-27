@@ -3,6 +3,7 @@
 import * as React from "react";
 import { AlertTriangle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useModalA11y } from "@/components/ui/use-modal-a11y";
 
 export interface InvalidationWarningModalProps {
   isOpen: boolean;
@@ -24,6 +25,14 @@ export function InvalidationWarningModal({
   actionType = "edit",
 }: InvalidationWarningModalProps) {
   const [confirmed, setConfirmed] = React.useState(false);
+  const modalRef = React.useRef<HTMLDivElement>(null);
+
+  useModalA11y({
+    isOpen,
+    onClose,
+    disabled: isInvalidating,
+    containerRef: modalRef,
+  });
 
   React.useEffect(() => {
     if (isOpen) {
@@ -35,6 +44,7 @@ export function InvalidationWarningModal({
 
   return (
     <div
+      ref={modalRef}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
       role="alertdialog"
       aria-modal="true"

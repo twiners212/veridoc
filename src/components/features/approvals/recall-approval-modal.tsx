@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Undo2, X, AlertTriangle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useModalA11y } from "@/components/ui/use-modal-a11y";
 import { recallApprovalAction } from "@/server/actions/approval.actions";
 
 export interface RecallApprovalModalProps {
@@ -35,6 +36,14 @@ export function RecallApprovalModal({
   const [reason, setReason] = React.useState("");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const modalRef = React.useRef<HTMLDivElement>(null);
+
+  useModalA11y({
+    isOpen,
+    onClose,
+    disabled: isSubmitting,
+    containerRef: modalRef,
+  });
 
   React.useEffect(() => {
     if (isOpen) {
@@ -88,6 +97,7 @@ export function RecallApprovalModal({
 
   return (
     <div
+      ref={modalRef}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
@@ -116,6 +126,7 @@ export function RecallApprovalModal({
             onClick={onClose}
             disabled={isSubmitting}
             className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            aria-label="Close dialog"
           >
             <X className="h-4 w-4" />
           </button>

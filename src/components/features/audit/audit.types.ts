@@ -33,6 +33,7 @@ export interface AuditStats {
   totalEntries?: number;
   headHash?: string | null;
   chainVerified?: boolean;
+  failedSequenceNumber?: number;
 }
 
 export interface AuditChainVerificationResult {

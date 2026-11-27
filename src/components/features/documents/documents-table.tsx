@@ -197,19 +197,19 @@ export function DocumentsTable({
       </div>
 
       {/* 2. Documents Table */}
-      <div className="rounded-lg border border-border bg-card shadow-sm overflow-hidden">
+      <div className="rounded-lg border border-border bg-card shadow-sm overflow-hidden min-w-0">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="border-b border-border bg-muted/50 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
               <tr>
-                <th className="px-4 py-3">Document Code</th>
-                <th className="px-4 py-3">Title & Category</th>
-                <th className="px-3 py-3">Format</th>
-                <th className="px-3 py-3">Version</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">SHA-256 Digest</th>
-                <th className="px-4 py-3">Updated</th>
-                <th className="px-4 py-3 text-right">Action</th>
+                <th className="px-2.5 2xl:px-4 py-3 whitespace-nowrap">Document Code</th>
+                <th className="px-2.5 2xl:px-4 py-3">Title &amp; Category</th>
+                <th className="px-2.5 2xl:px-3 py-3 whitespace-nowrap">Format</th>
+                <th className="px-2.5 2xl:px-3 py-3 whitespace-nowrap">Version</th>
+                <th className="px-2.5 2xl:px-4 py-3 whitespace-nowrap">Status</th>
+                <th className="px-2.5 2xl:px-4 py-3 whitespace-nowrap">SHA-256 Digest</th>
+                <th className="hidden 2xl:table-cell px-4 py-3 whitespace-nowrap">Updated</th>
+                <th className="px-2.5 2xl:px-4 py-3 text-right whitespace-nowrap">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -238,7 +238,7 @@ export function DocumentsTable({
                     className="hover:bg-muted/40 transition-colors group"
                   >
                     {/* Document Code */}
-                    <td className="px-4 py-3.5 whitespace-nowrap">
+                    <td className="px-2.5 2xl:px-4 py-3 whitespace-nowrap">
                       <Link
                         href={`/documents/${doc.id}`}
                         className="inline-flex items-center gap-1.5 font-mono text-xs font-bold text-foreground hover:text-primary transition-colors"
@@ -249,7 +249,7 @@ export function DocumentsTable({
                     </td>
 
                     {/* Title & Category */}
-                    <td className="px-4 py-3.5 min-w-[220px]">
+                    <td className="px-2.5 2xl:px-4 py-3 min-w-0 max-w-[190px] 2xl:max-w-[260px]">
                       <Link
                         href={`/documents/${doc.id}`}
                         className="font-medium text-foreground hover:text-primary transition-colors block truncate"
@@ -271,16 +271,16 @@ export function DocumentsTable({
                     </td>
 
                     {/* Format */}
-                    <td className="px-3 py-3.5 whitespace-nowrap">
+                    <td className="px-2.5 2xl:px-3 py-3 whitespace-nowrap">
                       <span className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground">
                         {doc.contentFormat === "PDF" ? (
                           <>
-                            <FileText className="h-3.5 w-3.5 text-red-600" />
+                            <FileText className="h-3.5 w-3.5 text-red-600 dark:text-red-400" />
                             <span>PDF</span>
                           </>
                         ) : (
                           <>
-                            <FileCode className="h-3.5 w-3.5 text-blue-600" />
+                            <FileCode className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
                             <span>Markdown</span>
                           </>
                         )}
@@ -288,7 +288,7 @@ export function DocumentsTable({
                     </td>
 
                     {/* Version */}
-                    <td className="px-3 py-3.5 whitespace-nowrap">
+                    <td className="px-2.5 2xl:px-3 py-3 whitespace-nowrap">
                       <span className="inline-flex items-center px-1.5 py-0.5 rounded font-mono text-xs bg-muted text-foreground border border-border/80">
                         {doc.currentVersionLabel}
                       </span>
@@ -300,24 +300,24 @@ export function DocumentsTable({
                     </td>
 
                     {/* Status Badge */}
-                    <td className="px-4 py-3.5 whitespace-nowrap">
+                    <td className="px-2.5 2xl:px-4 py-3 whitespace-nowrap">
                       <LifecycleStatusBadge state={doc.lifecycleState} size="sm" />
                     </td>
 
                     {/* SHA-256 Digest */}
-                    <td className="px-4 py-3.5 whitespace-nowrap">
+                    <td className="px-2.5 2xl:px-4 py-3 whitespace-nowrap">
                       <Sha256DigestChip digest={doc.documentSha256} />
                     </td>
 
                     {/* Updated At */}
-                    <td className="px-4 py-3.5 whitespace-nowrap text-xs text-muted-foreground font-mono">
+                    <td className="hidden 2xl:table-cell px-4 py-3 whitespace-nowrap text-xs text-muted-foreground font-mono">
                       {formatDate(doc.updatedAt)}
                     </td>
 
                     {/* Action */}
-                    <td className="px-4 py-3.5 whitespace-nowrap text-right">
+                    <td className="px-2.5 2xl:px-4 py-3 whitespace-nowrap text-right">
                       <Link href={`/documents/${doc.id}`}>
-                        <Button variant="outline" size="sm" className="h-7 text-xs">
+                        <Button variant="outline" size="sm" className="h-7 px-2.5 text-xs">
                           Workspace
                         </Button>
                       </Link>

@@ -284,10 +284,10 @@ export function PdfUploader({
   return (
     <div className={cn("space-y-4", className)}>
       {/* Existing PDF Banner if already attached */}
-      {existingPdf?.fileSha256 && (
+      {existingPdf?.fileSha256 ? (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-lg border border-border bg-muted/30">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-red-100 text-red-700 flex items-center justify-center shrink-0">
+            <div className="h-10 w-10 rounded-lg bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300 flex items-center justify-center shrink-0">
               <FileText className="h-5 w-5" />
             </div>
             <div>
@@ -317,6 +317,26 @@ export function PdfUploader({
             </Button>
           )}
         </div>
+      ) : (
+        (readOnly || isImmutable) && (
+          <div className="flex flex-col items-center justify-center gap-2.5 rounded-lg border border-dashed border-border bg-muted/30 p-8 text-center">
+            <div className="h-11 w-11 rounded-full bg-muted text-muted-foreground flex items-center justify-center border border-border">
+              <FileText className="h-5 w-5" />
+            </div>
+            <div className="space-y-1 max-w-md">
+              <p className="text-sm font-semibold text-foreground">
+                No PDF Attachment
+              </p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                This controlled document version uses Structured Markdown format or has no binary PDF file attached. Versions in{" "}
+                <span className="font-mono font-semibold text-foreground">
+                  {lifecycleState}
+                </span>{" "}
+                state are read-only and immutable.
+              </p>
+            </div>
+          </div>
+        )
       )}
 
       {/* Upload Dropzone */}
