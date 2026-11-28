@@ -298,7 +298,7 @@ export function DocumentDetailView({
   };
 
   return (
-    <div className={cn("flex flex-col min-h-screen", className)}>
+    <div className={cn("flex flex-col min-h-screen min-w-0", className)}>
       {/* Top Utility Bar */}
       <TopUtilityBar
         breadcrumbs={[
@@ -310,7 +310,7 @@ export function DocumentDetailView({
         role={currentUserRole}
       />
 
-      <div className="flex-1 px-4 py-6 sm:px-8 max-w-7xl w-full mx-auto space-y-6">
+      <div className="flex-1 min-w-0 px-4 py-6 sm:px-8 max-w-7xl w-full mx-auto space-y-6">
         {/* 1. Header Bar with Document Code, Title, Lifecycle Badge, & Actions */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 rounded-lg border border-border bg-card p-4 shadow-sm">
           <div className="space-y-1.5 min-w-0">
@@ -354,7 +354,7 @@ export function DocumentDetailView({
                 className="w-full text-xl sm:text-2xl font-bold tracking-tight bg-transparent text-foreground border-b border-transparent hover:border-border focus:border-primary focus:outline-none py-0.5"
               />
             ) : (
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground truncate">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground break-words">
                 {activeVersion.title}
               </h1>
             )}
@@ -381,7 +381,7 @@ export function DocumentDetailView({
           </div>
 
           {/* Action CTAs */}
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto lg:shrink-0">
             {/* Signed PDF Preview Trigger */}
             <Button
               type="button"
@@ -547,13 +547,16 @@ export function DocumentDetailView({
         )}
 
         {/* 2. Workspace Navigation Tabs */}
-        <div className="border-b border-border">
-          <nav className="flex space-x-6">
+        <div className="border-b border-border overflow-x-auto">
+          <nav
+            aria-label="Document Workspace Tabs"
+            className="-mb-px flex gap-4 sm:gap-6 whitespace-nowrap"
+          >
             <button
               type="button"
               onClick={() => setActiveTab("editor")}
               className={cn(
-                "flex items-center gap-2 py-3 border-b-2 text-sm font-medium transition-colors",
+                "shrink-0 min-h-[44px] flex items-center gap-2 py-3 border-b-2 text-sm font-medium transition-colors",
                 activeTab === "editor"
                   ? "border-primary text-primary dark:border-blue-400 dark:text-blue-400 font-semibold"
                   : "border-transparent text-muted-foreground hover:text-foreground"
@@ -567,7 +570,7 @@ export function DocumentDetailView({
               type="button"
               onClick={() => setActiveTab("pdf")}
               className={cn(
-                "flex items-center gap-2 py-3 border-b-2 text-sm font-medium transition-colors",
+                "shrink-0 min-h-[44px] flex items-center gap-2 py-3 border-b-2 text-sm font-medium transition-colors",
                 activeTab === "pdf"
                   ? "border-primary text-primary dark:border-blue-400 dark:text-blue-400 font-semibold"
                   : "border-transparent text-muted-foreground hover:text-foreground"
@@ -581,7 +584,7 @@ export function DocumentDetailView({
               type="button"
               onClick={() => setActiveTab("diff")}
               className={cn(
-                "flex items-center gap-2 py-3 border-b-2 text-sm font-medium transition-colors",
+                "shrink-0 min-h-[44px] flex items-center gap-2 py-3 border-b-2 text-sm font-medium transition-colors",
                 activeTab === "diff"
                   ? "border-primary text-primary dark:border-blue-400 dark:text-blue-400 font-semibold"
                   : "border-transparent text-muted-foreground hover:text-foreground"
@@ -595,7 +598,7 @@ export function DocumentDetailView({
               type="button"
               onClick={() => setActiveTab("metadata")}
               className={cn(
-                "flex items-center gap-2 py-3 border-b-2 text-sm font-medium transition-colors",
+                "shrink-0 min-h-[44px] flex items-center gap-2 py-3 border-b-2 text-sm font-medium transition-colors",
                 activeTab === "metadata"
                   ? "border-primary text-primary dark:border-blue-400 dark:text-blue-400 font-semibold"
                   : "border-transparent text-muted-foreground hover:text-foreground"

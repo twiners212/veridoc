@@ -5,7 +5,6 @@ import {
   Search,
   Filter,
   Download,
-  UserPlus,
   Shield,
   FileText,
   FileCheck,
@@ -32,14 +31,13 @@ export interface MemberRow {
 export interface MembersTableProps {
   members: MemberRow[];
   currentUserId?: string;
-  onInviteClick: () => void;
+  onInviteClick?: () => void;
   onEditClick: (member: MemberRow) => void;
 }
 
 export function MembersTable({
   members,
   currentUserId,
-  onInviteClick,
   onEditClick,
 }: MembersTableProps) {
   const [search, setSearch] = React.useState("");
@@ -147,7 +145,7 @@ export function MembersTable({
             aria-label="Filter by role"
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="rounded-md border border-input bg-background px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            className="flex-1 sm:flex-initial min-w-0 rounded-md border border-input bg-background px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
           >
             <option value="ALL">All Roles</option>
             <option value="WORKSPACE_ADMIN">WORKSPACE_ADMIN</option>
@@ -161,7 +159,7 @@ export function MembersTable({
             aria-label="Filter by status"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-md border border-input bg-background px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            className="flex-1 sm:flex-initial min-w-0 rounded-md border border-input bg-background px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
           >
             <option value="ALL">All Statuses</option>
             <option value="ACTIVE">Active</option>
@@ -173,17 +171,106 @@ export function MembersTable({
             <Download className="h-4 w-4 mr-1 sm:inline hidden" />
             <span>Export CSV</span>
           </Button>
-
-          <Button size="sm" onClick={onInviteClick}>
-            <UserPlus className="h-4 w-4 mr-1" />
-            <span>Invite Member</span>
-          </Button>
         </div>
       </div>
 
-      {/* Table */}
+      {/* Table & Mobile Cards */}
       <div className="rounded-lg border border-border bg-card overflow-hidden shadow-xs">
-        <div className="overflow-x-auto">
+        {/* Mobile Stacked Cards (< md) */}
+        <div className="md:hidden divide-y divide-border/60">
+          {filteredMembers.length === 0 ? (
+            <div className="px-4 py-8 text-center text-muted-foreground text-sm">
+              No members match the active filters.
+            </div>
+          ) : (
+            filteredMembers.map((m) => {
+              const isSelf = currentUserId === m.userId;
+              return (
+                <div
+                  key={m.id}
+                  data-testid="member-row"
+                  className="p-4 space-y-3"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center space-x-3 min-w-0">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary dark:bg-blue-500/15 dark:text-blue-300 font-bold text-xs uppercase">
+                        {m.name.slice(0, 2) || "U"}
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <div className="flex items-center space-x-1.5 min-w-0">
+                          <span className="font-medium text-foreground truncate">{m.name}</span>
+                          {isSelf && (
+                            <span className="rounded bg-muted px-1.5 py-0.2 text-[10px] font-bold text-muted-foreground shrink-0">
+                              You
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-xs text-muted-foreground truncate">{m.email}</span>
+                      </div>
+                    </div>
+                    <div className="shrink-0">
+                      {m.status === "ACTIVE" && (
+                        <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
+                          ACTIVE
+                        </span>
+                      )}
+                      {m.status === "INVITED" && (
+                        <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:bg-amber-950/60 dark:text-amber-300">
+                          INVITED
+                        </span>
+                      )}
+                      {m.status === "DEACTIVATED" && (
+                        <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold text-muted-foreground">
+                          DEACTIVATED
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex items-center space-x-1.5">
+                      {getRoleIcon(m.role)}
+                      <span className="text-xs font-medium text-foreground">
+                        {m.role.replace("_", " ")}
+                      </span>
+                    </div>
+                    {getSeatTypeBadge(m.role, m.status)}
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                    {m.groups.length > 0 ? (
+                      <div className="flex flex-wrap gap-1 min-w-0">
+                        {m.groups.map((g) => (
+                          <span
+                            key={g.id}
+                            className="inline-block rounded bg-muted/60 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
+                          >
+                            {g.name}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-xs text-muted-foreground italic">No groups</span>
+                    )}
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onEditClick(m)}
+                      className="min-h-[44px] px-3 text-xs shrink-0"
+                    >
+                      <Edit2 className="h-3.5 w-3.5 mr-1.5" />
+                      <span>Edit</span>
+                    </Button>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Desktop Table (>= md) */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="bg-muted/40 text-xs font-semibold text-muted-foreground uppercase border-b border-border">
               <tr>
@@ -206,7 +293,7 @@ export function MembersTable({
                 filteredMembers.map((m) => {
                   const isSelf = currentUserId === m.userId;
                   return (
-                    <tr key={m.id} className="hover:bg-muted/20 transition-colors">
+                    <tr key={m.id} data-testid="member-row" className="hover:bg-muted/20 transition-colors">
                       {/* Member Info */}
                       <td className="px-4 py-3">
                         <div className="flex items-center space-x-3">

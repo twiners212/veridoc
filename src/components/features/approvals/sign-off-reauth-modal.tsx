@@ -184,14 +184,14 @@ export function SignOffReauthModal({
       aria-modal="true"
       aria-labelledby="reauth-modal-title"
     >
-      <div className="w-full max-w-xl rounded-xl border border-border bg-card shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div className="flex flex-col max-h-[90dvh] w-full max-w-xl rounded-xl border border-border bg-card shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Modal Header */}
-        <div className="p-5 border-b border-border flex items-start justify-between bg-card">
-          <div className="space-y-1">
+        <div className="shrink-0 p-4 sm:p-5 border-b border-border flex items-start justify-between gap-3 bg-card">
+          <div className="space-y-1 min-w-0">
             <div className="flex items-center gap-2">
               <div
                 className={cn(
-                  "w-7 h-7 rounded flex items-center justify-center text-primary-foreground",
+                  "w-7 h-7 shrink-0 rounded flex items-center justify-center text-primary-foreground",
                   decision === "APPROVE" ? "bg-primary" : "bg-destructive"
                 )}
               >
@@ -220,79 +220,80 @@ export function SignOffReauthModal({
             type="button"
             onClick={onClose}
             disabled={isSubmitting}
-            className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] shrink-0 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             aria-label="Close dialog"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
-        {/* Modal Body */}
-        <div className="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
-          {/* Error Banner */}
-          {errorMessage && (
-            <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive flex items-start gap-2 text-xs">
-              <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
-              <span>{errorMessage}</span>
-            </div>
-          )}
-
-          {/* Locked Governance Summary Box */}
-          <div className="p-3.5 rounded-lg bg-muted/40 border border-border space-y-2 text-xs">
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground font-medium">Document ID:</span>
-              <span className="font-semibold text-foreground text-right truncate max-w-[320px]">
-                {documentCode} ({documentTitle})
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground font-medium">Target Version:</span>
-              <span className="font-mono font-bold text-foreground bg-muted px-1.5 py-0.5 rounded">
-                {versionLabel}
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground font-medium">Binding Digest:</span>
-              <div className="font-mono text-[11px] text-primary flex items-center gap-1.5 font-semibold">
-                <span>{truncatedHash}</span>
-                <button
-                  type="button"
-                  onClick={handleCopyDigest}
-                  className="p-0.5 text-muted-foreground hover:text-primary transition-colors"
-                  title="Copy full 64-char SHA-256 digest"
-                >
-                  {copiedDigest ? (
-                    <Check className="h-3 w-3 text-emerald-600" />
-                  ) : (
-                    <Copy className="h-3 w-3" />
-                  )}
-                </button>
-              </div>
-            </div>
-            <div className="flex justify-between items-center pt-2 border-t border-border">
-              <span className="text-muted-foreground font-medium">Sign-Off Role:</span>
-              <span className="font-semibold text-foreground">
-                {currentUserRole.replace(/_/g, " ")} ({currentUserName})
-              </span>
-            </div>
-
-            {/* Separation of Duties Status Indicator */}
-            {isSelfApprovalBlocked ? (
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-destructive pt-1">
-                <AlertTriangle className="h-3.5 w-3.5" />
-                <span>
-                  BR-APP-01 Separation of Duties Violation (Author cannot approve)
-                </span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-700 pt-1">
-                <Check className="h-3.5 w-3.5" />
-                <span>BR-APP-01 Separation of Duties Verified (Actor is not Author)</span>
+        {/* Form wrapping scrollable body and pinned footer */}
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          {/* Modal Body */}
+          <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
+            {/* Error Banner */}
+            {errorMessage && (
+              <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive flex items-start gap-2 text-xs">
+                <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
+                <span>{errorMessage}</span>
               </div>
             )}
-          </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Locked Governance Summary Box */}
+            <div className="p-3.5 rounded-lg bg-muted/40 border border-border space-y-2 text-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-3">
+                <span className="text-muted-foreground font-medium shrink-0">Document ID:</span>
+                <span className="font-semibold text-foreground min-w-0 break-words sm:text-right">
+                  {documentCode} ({documentTitle})
+                </span>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-3">
+                <span className="text-muted-foreground font-medium shrink-0">Target Version:</span>
+                <span className="font-mono font-bold text-foreground bg-muted px-1.5 py-0.5 rounded self-start sm:self-auto min-w-0 break-words sm:text-right">
+                  {versionLabel}
+                </span>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-3">
+                <span className="text-muted-foreground font-medium shrink-0">Binding Digest:</span>
+                <div className="font-mono text-[11px] text-primary flex items-center gap-1.5 font-semibold min-w-0 break-words sm:justify-end">
+                  <span className="min-w-0 break-all sm:text-right">{truncatedHash}</span>
+                  <button
+                    type="button"
+                    onClick={handleCopyDigest}
+                    className="p-0.5 text-muted-foreground hover:text-primary transition-colors shrink-0"
+                    title="Copy full 64-char SHA-256 digest"
+                  >
+                    {copiedDigest ? (
+                      <Check className="h-3 w-3 text-emerald-600" />
+                    ) : (
+                      <Copy className="h-3 w-3" />
+                    )}
+                  </button>
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-3 pt-2 border-t border-border">
+                <span className="text-muted-foreground font-medium shrink-0">Sign-Off Role:</span>
+                <span className="font-semibold text-foreground min-w-0 break-words sm:text-right">
+                  {currentUserRole.replace(/_/g, " ")} ({currentUserName})
+                </span>
+              </div>
+
+              {/* Separation of Duties Status Indicator */}
+              {isSelfApprovalBlocked ? (
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-destructive pt-1">
+                  <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                  <span>
+                    BR-APP-01 Separation of Duties Violation (Author cannot approve)
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-700 pt-1">
+                  <Check className="h-3.5 w-3.5 shrink-0" />
+                  <span>BR-APP-01 Separation of Duties Verified (Actor is not Author)</span>
+                </div>
+              )}
+            </div>
+
             {/* Field 1: Sign-Off Intent / Justification */}
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
@@ -374,50 +375,52 @@ export function SignOffReauthModal({
                 trail.
               </p>
             </div>
+          </div>
 
-            {/* Modal Actions */}
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-border">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={onClose}
-                disabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                size="sm"
-                variant={decision === "APPROVE" ? "default" : "destructive"}
-                disabled={
-                  isSubmitting ||
-                  isSelfApprovalBlocked ||
-                  decisionIntent.trim().length < 5 ||
-                  !password
-                }
-                data-testid="confirm-sign-off-button"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
-                    Executing Sign-Off...
-                  </>
-                ) : decision === "APPROVE" ? (
-                  <>
-                    <Shield className="h-3.5 w-3.5 mr-1.5" />
-                    Confirm Digital Sign-Off
-                  </>
-                ) : (
-                  <>
-                    <XCircle className="h-3.5 w-3.5 mr-1.5" />
-                    Confirm Rejection
-                  </>
-                )}
-              </Button>
-            </div>
-          </form>
-        </div>
+          {/* Pinned Modal Actions Footer */}
+          <div className="shrink-0 p-4 sm:px-5 border-t border-border bg-card flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onClose}
+              disabled={isSubmitting}
+              className="w-full sm:w-auto min-h-[44px] sm:min-h-0"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              size="sm"
+              variant={decision === "APPROVE" ? "default" : "destructive"}
+              disabled={
+                isSubmitting ||
+                isSelfApprovalBlocked ||
+                decisionIntent.trim().length < 5 ||
+                !password
+              }
+              className="w-full sm:w-auto min-h-[44px] sm:min-h-0"
+              data-testid="confirm-sign-off-button"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                  Executing Sign-Off...
+                </>
+              ) : decision === "APPROVE" ? (
+                <>
+                  <Shield className="h-3.5 w-3.5 mr-1.5" />
+                  Confirm Digital Sign-Off
+                </>
+              ) : (
+                <>
+                  <XCircle className="h-3.5 w-3.5 mr-1.5" />
+                  Confirm Rejection
+                </>
+              )}
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );

@@ -38,13 +38,13 @@ export function MobileHeader({
 
   return (
     <header className="sticky top-0 z-30 flex h-14 w-full items-center justify-between gap-2 border-b border-border/80 bg-white/85 dark:bg-slate-950/85 px-3 backdrop-blur-md lg:hidden">
-      <Link href={brandHref} className="flex min-w-0 items-center space-x-2">
+      <Link href={brandHref} className="flex min-h-[44px] flex-1 min-w-0 items-center space-x-2">
         <VeriDocMark size="sm" />
         <div className="flex min-w-0 flex-col">
           <span className="font-semibold text-xs leading-none text-foreground">
             VeriDoc
           </span>
-          <span className="text-[10px] text-muted-foreground flex items-center space-x-1 truncate max-w-[120px]">
+          <span className="text-[10px] text-muted-foreground flex items-center space-x-1 truncate">
             <Building2 className="h-2.5 w-2.5 inline shrink-0" />
             <span className="truncate">{tenantName}</span>
           </span>
@@ -53,12 +53,12 @@ export function MobileHeader({
 
       <div className="flex shrink-0 items-center gap-1.5">
         <ThemeToggle />
-        <div className="flex flex-col items-end">
-          <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary dark:bg-blue-500/15 dark:text-blue-300">
+        <div className="hidden sm:flex flex-col items-end">
+          <span className="hidden sm:inline-flex rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary dark:bg-blue-500/15 dark:text-blue-300">
             {role.replace(/_/g, " ")}
           </span>
           {userName && (
-            <span className="max-w-[100px] truncate text-[10px] text-muted-foreground">
+            <span className="hidden sm:block max-w-[100px] truncate text-[10px] text-muted-foreground">
               {userName}
             </span>
           )}

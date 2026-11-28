@@ -167,7 +167,7 @@ export function buildLifecycleFilterForRole(
       return sql`(${documentVersions.lifecycleState} = 'PUBLISHED' OR (${documentVersions.authorId} = ${userId} AND ${documentVersions.lifecycleState} != 'RETIRED'))`;
 
     case "APPROVER_REVIEWER":
-      return sql`(${documentVersions.lifecycleState} = 'PUBLISHED' OR (${documentVersions.lifecycleState} IN ('PENDING_APPROVAL', 'APPROVED') AND EXISTS (
+      return sql`(${documentVersions.lifecycleState} = 'PUBLISHED' OR (${documentVersions.lifecycleState} IN ('PENDING_APPROVAL', 'APPROVED', 'SUPERSEDED') AND EXISTS (
         SELECT 1 FROM veridoc.approval_cycles ac
         JOIN veridoc.approval_steps ast ON ast.approval_cycle_id = ac.id
         WHERE ac.document_version_id = ${documentVersions.id}

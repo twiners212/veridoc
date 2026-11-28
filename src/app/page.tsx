@@ -64,8 +64,8 @@ export default async function HomePage() {
     <main className="min-h-screen bg-shell-canvas text-foreground">
       {/* Top Bar */}
       <header className="sticky top-0 z-30 border-b border-border/80 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md">
-        <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-2.5">
+        <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4 sm:px-6">
+          <Link href="/" className="flex min-h-[44px] items-center gap-2.5">
             <VeriDocMark size="md" />
             <span className="text-sm font-semibold tracking-tight text-foreground">
               VeriDoc
@@ -76,7 +76,7 @@ export default async function HomePage() {
             <ThemeToggle showLabel />
             <Link
               href={ctx ? getDefaultLandingRouteForRole(ctx.role) : "/auth/sign-in"}
-              className="inline-flex h-8 items-center gap-1.5 rounded-md bg-brand-gradient px-3.5 text-xs font-semibold text-white shadow-xs transition-opacity hover:opacity-95"
+              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-md bg-brand-gradient px-3.5 text-xs font-semibold text-white shadow-xs transition-opacity hover:opacity-95"
             >
               <span>{ctx ? "Workspace" : "Sign In"}</span>
               <ArrowRight className="h-3.5 w-3.5" />
@@ -87,7 +87,7 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden border-b border-border/80 bg-gradient-to-b from-blue-50/70 via-white/90 to-indigo-50/40 dark:from-slate-950 dark:via-slate-900/95 dark:to-indigo-950/30 px-6 py-16 sm:py-20">
-        <div className="pointer-events-none absolute -top-24 left-1/2 h-64 w-[42rem] -translate-x-1/2 rounded-full bg-gradient-to-r from-blue-500/15 via-indigo-500/15 to-sky-400/15 blur-3xl dark:from-blue-500/20 dark:via-indigo-500/20 dark:to-sky-400/15" />
+        <div className="pointer-events-none absolute -top-24 left-1/2 h-64 w-full max-w-[42rem] -translate-x-1/2 rounded-full bg-gradient-to-r from-blue-500/15 via-indigo-500/15 to-sky-400/15 blur-3xl dark:from-blue-500/20 dark:via-indigo-500/20 dark:to-sky-400/15" />
 
         <div className="relative mx-auto flex w-full max-w-5xl flex-col items-center space-y-8 text-center">
           <div className="space-y-3">

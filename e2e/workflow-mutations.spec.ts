@@ -79,13 +79,13 @@ test.describe("Workflow Mutations & DB Persistence (AUD-001, AUD-002)", () => {
       .click();
 
     // Expect the newly created SOP to persist in PostgreSQL (AUD-001 fails before fix: shows fake SOP-NEW-001 or vanishes on reload)
-    const createdLink = page.locator("a", { hasText: uniqueCode }).first();
+    const createdLink = page.locator("a:visible", { hasText: uniqueCode }).first();
     await expect(createdLink).toBeVisible({ timeout: 10000 });
     await page.reload();
     await expect(
-      page.locator("a", { hasText: uniqueCode }).first()
+      page.locator("a:visible", { hasText: uniqueCode }).first()
     ).toBeVisible({ timeout: 10000 });
-    await page.locator("a", { hasText: uniqueCode }).first().click();
+    await page.locator("a:visible", { hasText: uniqueCode }).first().click();
     await page.waitForURL(/\/documents\/[0-9a-f-]+/i, { timeout: 15000 });
 
     const titleInput = page.locator(

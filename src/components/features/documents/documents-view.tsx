@@ -66,7 +66,7 @@ export function DocumentsView({
           </div>
 
           {canCreate && (
-            <div className="flex items-center gap-2.5">
+            <div className="flex flex-wrap items-center gap-2.5">
               <Button
                 type="button"
                 variant="outline"
@@ -92,7 +92,7 @@ export function DocumentsView({
         </div>
 
         {/* 2. Documents Table with Lifecycle Filters */}
-        <DocumentsTable documents={documents} />
+        <DocumentsTable documents={documents} currentUserRole={currentUserRole} />
       </div>
 
       {/* 3. New Document Modal */}

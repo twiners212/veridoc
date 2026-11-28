@@ -50,7 +50,7 @@ export function KpiStrip({ kpis, onFilterOverdue, className }: KpiStripProps) {
         className="bg-gradient-to-br from-card via-card to-emerald-50/40 dark:to-emerald-950/20 p-5 rounded-lg border border-border shadow-xs flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow"
       >
         <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500" />
-        <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
         <div>
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
@@ -84,7 +84,7 @@ export function KpiStrip({ kpis, onFilterOverdue, className }: KpiStripProps) {
         className="bg-gradient-to-br from-card via-card to-amber-50/40 dark:to-amber-950/20 p-5 rounded-lg border border-border shadow-xs flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow"
       >
         <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-amber-500 via-orange-500 to-amber-400" />
-        <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
         <div>
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
@@ -127,7 +127,7 @@ export function KpiStrip({ kpis, onFilterOverdue, className }: KpiStripProps) {
         className="bg-gradient-to-br from-card via-card to-blue-50/50 dark:to-blue-950/25 p-5 rounded-lg border border-border shadow-xs flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow"
       >
         <div className="absolute inset-x-0 top-0 h-[3px] bg-brand-gradient" />
-        <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
         <div>
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
@@ -180,7 +180,7 @@ export function KpiStrip({ kpis, onFilterOverdue, className }: KpiStripProps) {
         className="bg-gradient-to-br from-card via-card to-red-50/40 dark:to-red-950/20 p-5 rounded-lg border border-border shadow-xs flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow"
       >
         <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-red-600 via-rose-500 to-amber-500" />
-        <div className="absolute -right-3 -bottom-3 opacity-5 pointer-events-none text-destructive">
+        <div className="absolute right-0 bottom-0 opacity-5 pointer-events-none text-destructive">
           <ShieldAlert className="h-24 w-24" />
         </div>
         <div>

@@ -25,7 +25,7 @@ import { VeriDocMark } from "@/components/brand/veridoc-mark";
 import { cn } from "@/lib/utils";
 import type { WorkspaceRole } from "@/types/roles";
 
-const EXPANDED_SIDEBAR_PX = 240;
+const EXPANDED_SIDEBAR_PX = 256;
 const COLLAPSED_SIDEBAR_PX = 88;
 
 export interface DesktopSidebarProps {
@@ -84,7 +84,7 @@ export function DesktopSidebar({
   const isCollapsed = controlledCollapsed ?? uncontrolledCollapsed;
   const brandHref = role === "READER" ? "/to-read" : "/dashboard";
 
-  // Sync sidebar width with GSAP (240px <-> 88px) matching AppShell <main> paddingLeft
+  // Sync sidebar width with GSAP (256px <-> 88px) matching AppShell <main> paddingLeft
   React.useEffect(() => {
     const asideEl = asideRef.current;
     if (!asideEl) return;
@@ -217,7 +217,7 @@ export function DesktopSidebar({
     <aside
       ref={asideRef}
       data-collapsed={isCollapsed}
-      className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col overflow-hidden border-r border-border bg-gradient-to-b from-white via-slate-50/95 to-blue-50/50 dark:from-slate-950 dark:via-slate-900/95 dark:to-indigo-950/35 lg:flex shadow-xs"
+      className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col overflow-hidden border-r border-border bg-gradient-to-b from-white via-slate-50/95 to-blue-50/50 dark:from-slate-950 dark:via-slate-900/95 dark:to-indigo-950/35 lg:flex shadow-xs"
     >
       {/* Brand, Workspace & Minimize Toggle Header */}
       <div
@@ -225,13 +225,13 @@ export function DesktopSidebar({
           "flex border-b border-border/80 transition-colors",
           isCollapsed
             ? "flex-col items-center justify-center gap-2.5 py-3.5 px-2"
-            : "h-16 items-center justify-between px-4"
+            : "h-16 items-center justify-between gap-2 px-4"
         )}
       >
         <Link
           href={brandHref}
           title={isCollapsed ? `VeriDoc — ${tenantName}` : undefined}
-          className="flex items-center space-x-2.5 min-w-0"
+          className="flex flex-1 items-center space-x-2.5 min-w-0"
         >
           <VeriDocMark size="md" />
           {!isCollapsed && (
@@ -239,7 +239,7 @@ export function DesktopSidebar({
               <span className="font-semibold text-sm leading-tight text-foreground truncate">
                 VeriDoc
               </span>
-              <span className="text-[11px] text-muted-foreground flex items-center space-x-1 truncate max-w-[116px]">
+              <span className="text-[11px] text-muted-foreground flex items-center space-x-1 truncate">
                 <Building2 className="h-3 w-3 inline shrink-0" />
                 <span className="truncate">{tenantName}</span>
               </span>
@@ -308,7 +308,7 @@ export function DesktopSidebar({
                 "group relative flex items-center rounded-lg text-sm font-medium transition-all duration-150",
                 isCollapsed
                   ? "h-11 w-11 justify-center p-0 hover:scale-105"
-                  : "w-full justify-between px-3 py-2 hover:translate-x-0.5",
+                  : "w-full justify-between gap-2.5 px-2.5 py-2 hover:translate-x-0.5",
                 isActive
                   ? "bg-brand-gradient text-white shadow-sm shadow-blue-700/20"
                   : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
@@ -337,7 +337,7 @@ export function DesktopSidebar({
                 </>
               ) : (
                 <>
-                  <div className="flex items-center space-x-3 min-w-0">
+                  <div className="flex items-center space-x-2.5 min-w-0">
                     <Icon
                       className={cn(
                         "h-4 w-4 shrink-0",
@@ -351,7 +351,7 @@ export function DesktopSidebar({
                   {item.badge !== undefined && (
                     <span
                       className={cn(
-                        "ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold",
+                        "ml-auto shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold",
                         isActive
                           ? "bg-white/95 text-blue-700"
                           : "bg-destructive/10 text-destructive dark:bg-red-500/15 dark:text-red-400"

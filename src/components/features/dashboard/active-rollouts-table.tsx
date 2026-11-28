@@ -44,6 +44,15 @@ export interface ActiveRolloutsTableProps {
   className?: string;
 }
 
+function formatDueDate(dueDate: string): string {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(dueDate));
+}
+
 export function ActiveRolloutsTable({
   rollouts,
   availableGroups = [],
@@ -117,22 +126,24 @@ export function ActiveRolloutsTable({
   return (
     <div className={cn("flex flex-col gap-4", className)}>
       {/* Table Header & Controls Bar */}
-      <div className="bg-card p-4 rounded-lg border border-border shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <h2 className="text-base font-semibold text-foreground">Active SOP Rollouts</h2>
-          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+      <div className="bg-card p-4 rounded-lg border border-border shadow-xs flex flex-col xl:flex-row xl:flex-wrap xl:items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap min-w-0">
+          <h2 className="text-base font-semibold text-foreground shrink-0 whitespace-nowrap">
+            Active SOP Rollouts
+          </h2>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-muted text-muted-foreground shrink-0 whitespace-nowrap">
             {rollouts.length} Active
           </span>
-          <span className="hidden sm:inline-block w-1.5 h-1.5 rounded-full bg-border" />
-          <span className="hidden sm:inline-block text-xs font-mono text-muted-foreground">
+          <span className="hidden sm:inline-block xl:hidden 2xl:inline-block w-1.5 h-1.5 rounded-full bg-border shrink-0" />
+          <span className="hidden sm:inline-block xl:hidden 2xl:inline-block text-xs font-mono text-muted-foreground whitespace-nowrap">
             Append-Only Hash Chained
           </span>
         </div>
 
         {/* Filter Controls Strip */}
-        <div className="flex items-center flex-wrap gap-2">
+        <div className="flex items-center flex-wrap gap-2 min-w-0">
           {/* Live Search Filter */}
-          <div className="relative min-w-[180px] sm:min-w-[200px]">
+          <div className="relative w-full sm:w-auto sm:min-w-[200px]">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <input
               type="text"
@@ -148,7 +159,7 @@ export function ActiveRolloutsTable({
             aria-label="Filter by target audience group"
             value={selectedGroup}
             onChange={(e) => setSelectedGroup(e.target.value)}
-            className="bg-muted/50 border border-border text-foreground text-xs rounded px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
+            className="w-full sm:w-auto max-w-full bg-muted/50 border border-border text-foreground text-xs rounded px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
             title="Filter by target audience group"
           >
             <option value="ALL">All Target Groups</option>
@@ -164,7 +175,7 @@ export function ActiveRolloutsTable({
             aria-label="Filter by lifecycle state"
             value={selectedState}
             onChange={(e) => setSelectedState(e.target.value)}
-            className="bg-muted/50 border border-border text-foreground text-xs rounded px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
+            className="w-full sm:w-auto max-w-full bg-muted/50 border border-border text-foreground text-xs rounded px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
             title="Filter by lifecycle state"
           >
             <option value="ALL">Lifecycle: All</option>
@@ -217,7 +228,136 @@ export function ActiveRolloutsTable({
 
       {/* Compliance Table Container */}
       <div className="bg-card rounded-lg border border-border shadow-xs overflow-hidden min-w-0">
-        <div className="overflow-x-auto">
+        {/* Mobile Stacked Cards */}
+        <div className="md:hidden divide-y divide-border">
+          {filteredRollouts.length === 0 ? (
+            <div className="py-12 px-4 text-center text-muted-foreground">
+              <p className="text-sm font-medium">No active SOP rollouts match the selected filters.</p>
+              <p className="text-xs mt-1">Try resetting the group or search term.</p>
+            </div>
+          ) : (
+            filteredRollouts.map((row) => {
+              const is100 = row.completionPercent >= 100;
+              const isLow = row.completionPercent < 85 && row.overdueCount > 0;
+
+              return (
+                <div
+                  key={row.versionId || row.documentId}
+                  className={cn(
+                    "p-4 space-y-3 text-xs",
+                    isLow && "bg-red-50/30 dark:bg-red-950/20"
+                  )}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex flex-wrap items-center gap-1.5 min-w-0">
+                      <Link
+                        href={`/documents/${row.documentId}`}
+                        className="px-2 py-1 rounded bg-muted hover:bg-muted/80 font-mono font-bold text-foreground transition-colors inline-block"
+                      >
+                        {row.documentCode}
+                      </Link>
+                      <span className="font-mono text-[11px] font-semibold text-muted-foreground">
+                        {row.versionLabel}
+                      </span>
+                    </div>
+                    <LifecycleStatusBadge state={row.lifecycleState} size="sm" />
+                  </div>
+
+                  <div className="space-y-1 min-w-0">
+                    <Link
+                      href={`/documents/${row.documentId}`}
+                      className="block font-medium text-sm text-foreground hover:text-primary dark:hover:text-blue-400 transition-colors break-words"
+                    >
+                      {row.title}
+                    </Link>
+                    {row.targetAudienceGroupNames.length > 0 && (
+                      <div className="flex flex-wrap gap-1 pt-0.5">
+                        {row.targetAudienceGroupNames.map((g) => (
+                          <span
+                            key={g}
+                            className="px-2 py-0.5 rounded bg-muted text-foreground text-[11px] font-medium border border-border/50"
+                          >
+                            {g}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    {row.documentSha256 && (
+                      <p className="font-mono text-[10px] text-muted-foreground">
+                        SHA: {row.documentSha256.slice(0, 6)}…{row.documentSha256.slice(-4)}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex justify-between font-mono text-[11px] text-muted-foreground">
+                      <span>
+                        Read Completion ({row.acknowledgedCount}/{row.totalAssignedCount})
+                      </span>
+                      <span
+                        className={cn(
+                          "font-semibold",
+                          is100 && "text-emerald-700 dark:text-emerald-400",
+                          isLow && "text-destructive dark:text-red-400",
+                          !is100 && !isLow && "text-foreground"
+                        )}
+                      >
+                        {row.completionPercent.toFixed(0)}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className={cn(
+                          "h-1.5 rounded-full transition-all duration-500",
+                          is100 && "bg-emerald-600",
+                          isLow && "bg-destructive",
+                          !is100 && !isLow && "bg-primary"
+                        )}
+                        style={{ width: `${Math.min(100, Math.max(0, row.completionPercent))}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                    <div>
+                      {row.overdueCount > 0 ? (
+                        <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-red-100 text-red-800 border border-red-200 dark:bg-red-950/50 dark:text-red-300 dark:border-red-800 inline-flex items-center gap-1">
+                          <AlertCircle className="h-3 w-3" />
+                          <span>{row.overdueCount} overdue</span>
+                        </span>
+                      ) : is100 ? (
+                        <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 inline-flex items-center gap-1">
+                          <CheckCircle2 className="h-3 w-3" />
+                          <span>Completed</span>
+                        </span>
+                      ) : (
+                        <span className="text-[11px] text-muted-foreground font-mono inline-flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          <span>{row.dueDate ? `Due ${formatDueDate(row.dueDate)}` : "On track"}</span>
+                        </span>
+                      )}
+                    </div>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      data-testid="rollout-audit-packet-button"
+                      className="min-h-[44px] px-3 text-xs font-medium gap-1.5"
+                      onClick={() => onExportAuditPacket?.(row)}
+                    >
+                      <FileDown className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span>Audit Packet</span>
+                    </Button>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-muted/60 text-muted-foreground text-[11px] font-mono uppercase tracking-wider border-b border-border">
@@ -267,7 +407,7 @@ export function ActiveRolloutsTable({
                         <div className="flex flex-col min-w-0">
                           <Link
                             href={`/documents/${row.documentId}`}
-                            className="font-medium text-foreground hover:text-primary dark:hover:text-blue-400 transition-colors line-clamp-1"
+                            className="font-medium text-foreground hover:text-primary dark:hover:text-blue-400 transition-colors"
                           >
                             {row.title}
                           </Link>
@@ -365,7 +505,7 @@ export function ActiveRolloutsTable({
                         ) : (
                           <span className="text-[11px] text-muted-foreground font-mono inline-flex items-center gap-1">
                             <Clock className="h-3 w-3" />
-                            <span>{row.dueDate ? `Due ${new Date(row.dueDate).toLocaleDateString()}` : "On track"}</span>
+                            <span>{row.dueDate ? `Due ${formatDueDate(row.dueDate)}` : "On track"}</span>
                           </span>
                         )}
                       </td>
@@ -376,6 +516,7 @@ export function ActiveRolloutsTable({
                           type="button"
                           variant="outline"
                           size="sm"
+                          data-testid="rollout-audit-packet-button"
                           className="h-7 px-2.5 text-xs font-medium gap-1"
                           onClick={() => onExportAuditPacket?.(row)}
                         >

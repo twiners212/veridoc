@@ -9,7 +9,7 @@ import { MobileBottomNav } from "./mobile-bottom-nav";
 import type { WorkspaceRole } from "@/types/roles";
 
 const SIDEBAR_STORAGE_KEY = "veridoc-sidebar-collapsed";
-const EXPANDED_SIDEBAR_PX = 240;
+const EXPANDED_SIDEBAR_PX = 256;
 const COLLAPSED_SIDEBAR_PX = 88;
 
 export interface AppShellProps {
@@ -133,7 +133,7 @@ export function AppShell({
       {/* Main Content Area — paddingLeft stays synced via GSAP on lg+ */}
       <main
         ref={mainRef}
-        className="lg:pl-60 pb-20 lg:pb-0 min-h-screen min-w-0 flex flex-col"
+        className="lg:pl-64 pb-20 lg:pb-0 min-h-screen min-w-0 flex flex-col"
       >
         {children}
       </main>
