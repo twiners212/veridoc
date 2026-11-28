@@ -613,4 +613,387 @@ describe("Document Authoring, Lifecycle & Concurrency Actions (documents.actions
       }
     });
   });
+
+  describe("6. READER Lifecycle Isolation & APPROVER_REVIEWER SUPERSEDED Visibility", () => {
+    let readerIsolationTenantId: string;
+    let otherTenantId: string;
+    let publishedSafetyDocId: string;
+    let draftDocId: string;
+    let pendingDocId: string;
+    let approvedDocId: string;
+    let supersededOnlyDocId: string;
+    let retiredDocId: string;
+    let otherTenantPublishedDocId: string;
+    let assignedSupersededApproverId: string;
+    let unassignedSupersededApproverId: string;
+
+    beforeAll(async () => {
+      const [t1] = await testAdminDb
+        .insert(tenants)
+        .values({
+          name: "Reader Isolation Workspace",
+          slug: `reader-iso-ws-${Date.now()}`,
+        })
+        .returning();
+      readerIsolationTenantId = t1.id;
+      tenantIds.push(readerIsolationTenantId);
+
+      const [t2] = await testAdminDb
+        .insert(tenants)
+        .values({
+          name: "Other Isolation Workspace",
+          slug: `other-iso-ws-${Date.now()}`,
+        })
+        .returning();
+      otherTenantId = t2.id;
+      tenantIds.push(otherTenantId);
+
+      const [assignedSupUser] = await testAdminDb
+        .insert(users)
+        .values({
+          name: "Assigned Superseded Approver",
+          email: `assigned-sup-${Date.now()}@veridoc.test`,
+        })
+        .returning();
+      assignedSupersededApproverId = assignedSupUser.id;
+      userIds.push(assignedSupersededApproverId);
+
+      const [unassignedSupUser] = await testAdminDb
+        .insert(users)
+        .values({
+          name: "Unassigned Superseded Approver",
+          email: `unassigned-sup-${Date.now()}@veridoc.test`,
+        })
+        .returning();
+      unassignedSupersededApproverId = unassignedSupUser.id;
+      userIds.push(unassignedSupersededApproverId);
+
+      await testAdminDb.insert(tenantMemberships).values([
+        {
+          tenantId: readerIsolationTenantId,
+          userId: authorUserId,
+          role: "DOCUMENT_AUTHOR",
+          status: "ACTIVE",
+        },
+        {
+          tenantId: readerIsolationTenantId,
+          userId: readerUserId,
+          role: "READER",
+          status: "ACTIVE",
+        },
+        {
+          tenantId: readerIsolationTenantId,
+          userId: assignedSupersededApproverId,
+          role: "APPROVER_REVIEWER",
+          status: "ACTIVE",
+        },
+        {
+          tenantId: readerIsolationTenantId,
+          userId: unassignedSupersededApproverId,
+          role: "APPROVER_REVIEWER",
+          status: "ACTIVE",
+        },
+        {
+          tenantId: otherTenantId,
+          userId: authorUserId,
+          role: "DOCUMENT_AUTHOR",
+          status: "ACTIVE",
+        },
+        {
+          tenantId: otherTenantId,
+          userId: readerUserId,
+          role: "READER",
+          status: "ACTIVE",
+        },
+      ]);
+
+      const suffix = Date.now().toString(36).toUpperCase();
+      const [pubDoc, draftDoc, pendingDoc, approvedDoc, supersededDoc, retiredDoc] =
+        await testAdminDb
+          .insert(documents)
+          .values([
+            {
+              tenantId: readerIsolationTenantId,
+              documentCode: `SOP-ISO-PUB-${suffix}`,
+              category: "Safety",
+              createdBy: authorUserId,
+            },
+            {
+              tenantId: readerIsolationTenantId,
+              documentCode: `SOP-ISO-DRF-${suffix}`,
+              category: "Safety",
+              createdBy: authorUserId,
+            },
+            {
+              tenantId: readerIsolationTenantId,
+              documentCode: `SOP-ISO-PND-${suffix}`,
+              category: "Safety",
+              createdBy: authorUserId,
+            },
+            {
+              tenantId: readerIsolationTenantId,
+              documentCode: `SOP-ISO-APR-${suffix}`,
+              category: "Safety",
+              createdBy: authorUserId,
+            },
+            {
+              tenantId: readerIsolationTenantId,
+              documentCode: `SOP-ISO-SUP-${suffix}`,
+              category: "Safety",
+              createdBy: authorUserId,
+            },
+            {
+              tenantId: readerIsolationTenantId,
+              documentCode: `SOP-ISO-RET-${suffix}`,
+              category: "Safety",
+              createdBy: authorUserId,
+            },
+          ])
+          .returning();
+
+      publishedSafetyDocId = pubDoc.id;
+      draftDocId = draftDoc.id;
+      pendingDocId = pendingDoc.id;
+      approvedDocId = approvedDoc.id;
+      supersededOnlyDocId = supersededDoc.id;
+      retiredDocId = retiredDoc.id;
+
+      const [otherDoc] = await testAdminDb
+        .insert(documents)
+        .values({
+          tenantId: otherTenantId,
+          documentCode: `SOP-ISO-OTHER-${suffix}`,
+          category: "Safety",
+          createdBy: authorUserId,
+        })
+        .returning();
+      otherTenantPublishedDocId = otherDoc.id;
+
+      const [, , , , supersededVer] = await testAdminDb
+        .insert(documentVersions)
+        .values([
+          {
+            tenantId: readerIsolationTenantId,
+            documentId: publishedSafetyDocId,
+            versionMajor: 1,
+            versionMinor: 0,
+            title: "IsolationMatch Published SOP",
+            contentFormat: "MARKDOWN",
+            markdownContent: "# Published SOP",
+            documentSha256: "b".repeat(64),
+            lifecycleState: "PUBLISHED",
+            authorId: authorUserId,
+            rowVersion: 1,
+          },
+          {
+            tenantId: readerIsolationTenantId,
+            documentId: draftDocId,
+            versionMajor: 1,
+            versionMinor: 0,
+            title: "IsolationMatch Draft SOP",
+            contentFormat: "MARKDOWN",
+            markdownContent: "# Draft SOP",
+            documentSha256: "c".repeat(64),
+            lifecycleState: "DRAFT",
+            authorId: authorUserId,
+            rowVersion: 1,
+          },
+          {
+            tenantId: readerIsolationTenantId,
+            documentId: pendingDocId,
+            versionMajor: 1,
+            versionMinor: 0,
+            title: "IsolationMatch Pending SOP",
+            contentFormat: "MARKDOWN",
+            markdownContent: "# Pending SOP",
+            documentSha256: "d".repeat(64),
+            lifecycleState: "PENDING_APPROVAL",
+            authorId: authorUserId,
+            rowVersion: 1,
+          },
+          {
+            tenantId: readerIsolationTenantId,
+            documentId: approvedDocId,
+            versionMajor: 1,
+            versionMinor: 0,
+            title: "IsolationMatch Approved SOP",
+            contentFormat: "MARKDOWN",
+            markdownContent: "# Approved SOP",
+            documentSha256: "e".repeat(64),
+            lifecycleState: "APPROVED",
+            authorId: authorUserId,
+            rowVersion: 1,
+          },
+          {
+            tenantId: readerIsolationTenantId,
+            documentId: supersededOnlyDocId,
+            versionMajor: 1,
+            versionMinor: 0,
+            title: "IsolationMatch Superseded SOP",
+            contentFormat: "MARKDOWN",
+            markdownContent: "# Superseded SOP",
+            documentSha256: "f".repeat(64),
+            lifecycleState: "SUPERSEDED",
+            authorId: authorUserId,
+            rowVersion: 1,
+          },
+          {
+            tenantId: readerIsolationTenantId,
+            documentId: retiredDocId,
+            versionMajor: 1,
+            versionMinor: 0,
+            title: "IsolationMatch Retired SOP",
+            contentFormat: "MARKDOWN",
+            markdownContent: "# Retired SOP",
+            documentSha256: "0".repeat(64),
+            lifecycleState: "RETIRED",
+            authorId: authorUserId,
+            rowVersion: 1,
+          },
+        ])
+        .returning();
+
+      // Also add a DRAFT v1.1 on publishedSafetyDocId and a PUBLISHED v1.0 in otherTenantId
+      await testAdminDb.insert(documentVersions).values([
+        {
+          tenantId: readerIsolationTenantId,
+          documentId: publishedSafetyDocId,
+          versionMajor: 1,
+          versionMinor: 1,
+          title: "IsolationMatch Published SOP (Draft Revision)",
+          contentFormat: "MARKDOWN",
+          markdownContent: "# Draft v1.1",
+          documentSha256: "1".repeat(64),
+          lifecycleState: "DRAFT",
+          authorId: authorUserId,
+          rowVersion: 1,
+        },
+        {
+          tenantId: otherTenantId,
+          documentId: otherTenantPublishedDocId,
+          versionMajor: 1,
+          versionMinor: 0,
+          title: "IsolationMatch Foreign Tenant SOP",
+          contentFormat: "MARKDOWN",
+          markdownContent: "# Foreign Published SOP",
+          documentSha256: "2".repeat(64),
+          lifecycleState: "PUBLISHED",
+          authorId: authorUserId,
+          rowVersion: 1,
+        },
+      ]);
+
+      // Assign an approver to the SUPERSEDED version
+      const [supCycle] = await testAdminDb
+        .insert(approvalCycles)
+        .values({
+          tenantId: readerIsolationTenantId,
+          documentVersionId: supersededVer.id,
+          cycleNumber: 1,
+          submittedBy: authorUserId,
+          submittedSha256: "f".repeat(64),
+          status: "APPROVED",
+        })
+        .returning();
+
+      await testAdminDb.insert(approvalSteps).values({
+        tenantId: readerIsolationTenantId,
+        approvalCycleId: supCycle.id,
+        stepOrder: 1,
+        assignedApproverId: assignedSupersededApproverId,
+        status: "APPROVED",
+        actedByUserId: assignedSupersededApproverId,
+        actedByFullName: "Assigned Superseded Approver",
+        actedByRole: "APPROVER_REVIEWER",
+        signedDocumentSha256: "f".repeat(64),
+        decisionIntent: "Approved SOP v1.0 prior to supersession",
+        actedAt: new Date(),
+      });
+    });
+
+    it("READER calling listDocumentsAction receives ONLY PUBLISHED documents even when DRAFT, PENDING_APPROVAL, APPROVED, SUPERSEDED, and RETIRED exist", async () => {
+      const listRes = await listDocumentsAction(
+        { tenantId: readerIsolationTenantId, page: 1, limit: 50 },
+        { userId: readerUserId, callerDb: testAppDb }
+      );
+
+      expect(listRes.success).toBe(true);
+      if (!listRes.success) return;
+
+      expect(listRes.data.total).toBe(1);
+      expect(listRes.data.documents).toHaveLength(1);
+      expect(listRes.data.documents[0].id).toBe(publishedSafetyDocId);
+      expect(listRes.data.documents[0].lifecycleState).toBe("PUBLISHED");
+      expect(listRes.data.documents[0].currentVersionLabel).toBe("v1.0");
+      expect(listRes.data.documents[0].versionCount).toBe(1);
+    });
+
+    it("READER calling listDocumentsAction with category + search filters preserves tenant isolation", async () => {
+      const listRes = await listDocumentsAction(
+        {
+          tenantId: readerIsolationTenantId,
+          category: "Safety",
+          search: "IsolationMatch",
+          page: 1,
+          limit: 50,
+        },
+        { userId: readerUserId, callerDb: testAppDb }
+      );
+
+      expect(listRes.success).toBe(true);
+      if (!listRes.success) return;
+
+      expect(listRes.data.total).toBe(1);
+      expect(listRes.data.documents).toHaveLength(1);
+      expect(listRes.data.documents[0].id).toBe(publishedSafetyDocId);
+      expect(listRes.data.documents[0].tenantId).toBe(readerIsolationTenantId);
+      expect(
+        listRes.data.documents.some((d) => d.id === otherTenantPublishedDocId)
+      ).toBe(false);
+    });
+
+    it("assigned APPROVER_REVIEWER can view SUPERSEDED document version via listDocumentsAction and getDocumentDetailAction", async () => {
+      const listRes = await listDocumentsAction(
+        { tenantId: readerIsolationTenantId, page: 1, limit: 50 },
+        { userId: assignedSupersededApproverId, callerDb: testAppDb }
+      );
+
+      expect(listRes.success).toBe(true);
+      if (!listRes.success) return;
+      const found = listRes.data.documents.find((d) => d.id === supersededOnlyDocId);
+      expect(found).toBeDefined();
+      expect(found?.lifecycleState).toBe("SUPERSEDED");
+
+      const detailRes = await getDocumentDetailAction(
+        { tenantId: readerIsolationTenantId, documentId: supersededOnlyDocId },
+        { userId: assignedSupersededApproverId, callerDb: testAppDb }
+      );
+      expect(detailRes.success).toBe(true);
+      if (!detailRes.success) return;
+      expect(
+        detailRes.data.versions.some((v) => v.lifecycleState === "SUPERSEDED")
+      ).toBe(true);
+    });
+
+    it("unassigned APPROVER_REVIEWER cannot view SUPERSEDED document version via listDocumentsAction or getDocumentDetailAction", async () => {
+      const listRes = await listDocumentsAction(
+        { tenantId: readerIsolationTenantId, page: 1, limit: 50 },
+        { userId: unassignedSupersededApproverId, callerDb: testAppDb }
+      );
+
+      expect(listRes.success).toBe(true);
+      if (!listRes.success) return;
+      const found = listRes.data.documents.find((d) => d.id === supersededOnlyDocId);
+      expect(found).toBeUndefined();
+
+      const detailRes = await getDocumentDetailAction(
+        { tenantId: readerIsolationTenantId, documentId: supersededOnlyDocId },
+        { userId: unassignedSupersededApproverId, callerDb: testAppDb }
+      );
+      expect(detailRes.success).toBe(false);
+      if (!detailRes.success) {
+        expect(detailRes.error.status).toBe(404);
+      }
+    });
+  });
 });

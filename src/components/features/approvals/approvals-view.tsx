@@ -203,10 +203,10 @@ export function ApprovalsView({
   return (
     <div className="flex flex-col w-full min-h-screen bg-background">
       {/* Top Command & Filter Bar */}
-      <div className="px-6 lg:px-8 pt-6 pb-4 bg-card border-b border-border">
+      <div className="px-4 sm:px-6 lg:px-8 pt-6 pb-4 bg-card border-b border-border">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <h1 className="text-2xl font-bold tracking-tight text-foreground font-sans">
                 Approvals &amp; Sign-Offs
               </h1>
@@ -221,7 +221,7 @@ export function ApprovalsView({
           </div>
 
           {/* Quick Governance Status Indicator */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50 border border-border">
+          <div className="flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50 border border-border">
             <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
             <span className="font-mono text-xs text-muted-foreground">
               Separation of Duties Active
@@ -236,7 +236,7 @@ export function ApprovalsView({
         {/* Segmented Navigation Tabs & Context Filters */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-6 pt-1">
           <div
-            className="inline-flex p-1 bg-muted/60 rounded-lg border border-border"
+            className="inline-flex w-full sm:w-auto overflow-x-auto p-1 bg-muted/60 rounded-lg border border-border"
             role="tablist"
           >
             <button
@@ -248,7 +248,7 @@ export function ApprovalsView({
                 setScope("active");
               }}
               className={cn(
-                "flex items-center gap-2 px-4 py-1.5 rounded text-xs font-semibold transition-all",
+                "flex-1 sm:flex-initial justify-center flex items-center gap-2 px-4 py-1.5 rounded text-xs font-semibold transition-all whitespace-nowrap",
                 scope === "active"
                   ? "bg-card text-primary dark:text-blue-400 shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
@@ -277,7 +277,7 @@ export function ApprovalsView({
                 setScope("upcoming");
               }}
               className={cn(
-                "flex items-center gap-2 px-4 py-1.5 rounded text-xs font-semibold transition-all",
+                "flex-1 sm:flex-initial justify-center flex items-center gap-2 px-4 py-1.5 rounded text-xs font-semibold transition-all whitespace-nowrap",
                 scope === "upcoming"
                   ? "bg-card text-primary dark:text-blue-400 shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
@@ -299,7 +299,7 @@ export function ApprovalsView({
           </div>
 
           <div className="flex items-center gap-2.5">
-            <div className="relative w-64">
+            <div className="relative flex-1 min-w-0 sm:w-64 sm:flex-initial">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground h-3.5 w-3.5" />
               <input
                 type="text"
@@ -317,7 +317,7 @@ export function ApprovalsView({
               onClick={() =>
                 setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
               }
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-card border border-border text-xs text-foreground hover:bg-muted transition-colors"
+              className="inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 px-3 py-1.5 rounded bg-card border border-border text-xs text-foreground hover:bg-muted transition-colors"
             >
               <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
               <span>{sortOrder === "asc" ? "Oldest First" : "Newest First"}</span>
@@ -327,7 +327,7 @@ export function ApprovalsView({
       </div>
 
       {/* Master-Detail Split Workspace */}
-      <div className="flex flex-col lg:flex-row flex-1 p-6 lg:p-8 gap-6 max-w-[1720px] mx-auto w-full">
+      <div className="flex flex-col lg:flex-row flex-1 px-4 sm:px-6 lg:px-8 py-6 lg:py-8 gap-6 max-w-[1720px] mx-auto w-full">
         {/* Left Column: Master Queue List (approx 380px) */}
         <div className="w-full lg:w-[380px] shrink-0 flex flex-col gap-3">
           <div className="flex items-center justify-between px-1">
@@ -400,7 +400,7 @@ export function ApprovalsView({
                       })}
                     </p>
 
-                    <div className="mt-3 pt-2.5 border-t border-border flex items-center justify-between text-[11px] font-mono text-muted-foreground pl-1">
+                    <div className="mt-3 pt-2.5 border-t border-border flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-muted-foreground pl-1">
                       <span className="flex items-center gap-1 text-primary dark:text-blue-400 font-medium">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
                         Step {item.stepOrder} of {item.totalSteps} •{" "}
@@ -408,7 +408,7 @@ export function ApprovalsView({
                           ? item.assignedApproverRole.replace(/_/g, " ")
                           : "Approver"}
                       </span>
-                      <span className="truncate max-w-[120px]">
+                      <span className="truncate min-w-0">
                         {item.assignedApproverName}
                       </span>
                     </div>
@@ -428,11 +428,11 @@ export function ApprovalsView({
 
         {/* Right Column: Selected SOP Review Panel */}
         {selectedItem ? (
-          <div className="flex-1 bg-card rounded-lg border border-border shadow-sm flex flex-col overflow-hidden">
+          <div className="flex-1 min-w-0 bg-card rounded-lg border border-border shadow-sm flex flex-col overflow-hidden">
             {/* Review Panel Header */}
-            <div className="p-6 border-b border-border bg-card">
+            <div className="p-4 sm:p-6 border-b border-border bg-card">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                <div className="space-y-1">
+                <div className="space-y-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="font-mono text-sm font-bold text-primary dark:text-blue-400 tracking-wide">
                       {selectedItem.documentCode}
@@ -447,25 +447,23 @@ export function ApprovalsView({
                     <Sha256DigestChip digest={selectedItem.documentSha256} />
                   </div>
 
-                  <h2 className="text-xl font-bold text-foreground tracking-tight mt-1">
+                  <h2 className="text-xl font-bold text-foreground tracking-tight mt-1 break-words">
                     {selectedItem.documentTitle}
                   </h2>
 
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground pt-1">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground pt-1">
                     <span>
                       Author:{" "}
                       <strong className="text-foreground font-semibold">
                         {selectedItem.authorName}
                       </strong>
                     </span>
-                    <span>•</span>
                     <span>
                       Category:{" "}
                       <strong className="text-foreground font-semibold">
                         {selectedItem.category || "General"}
                       </strong>
                     </span>
-                    <span>•</span>
                     <span className="text-emerald-700 dark:text-emerald-400 font-medium flex items-center gap-1">
                       <Lock className="h-3 w-3" /> Effective Upon Final Sign-off
                     </span>
@@ -509,9 +507,9 @@ export function ApprovalsView({
             </div>
 
             {/* Diff / Digest Summary Notice Bar */}
-            <div className="px-6 py-2.5 bg-muted/30 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between text-xs gap-2">
-              <div className="flex items-center gap-2">
-                <FileCheck className="h-4 w-4 text-primary dark:text-blue-400" />
+            <div className="px-4 sm:px-6 py-2.5 bg-muted/30 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between text-xs gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <FileCheck className="h-4 w-4 text-primary dark:text-blue-400 shrink-0" />
                 <span className="text-foreground font-medium">
                   Controlled Content Format:
                 </span>
@@ -535,42 +533,45 @@ export function ApprovalsView({
               tabIndex={0}
               role="region"
               aria-label="Document preview"
-              className="p-6 lg:p-8 overflow-y-auto max-h-[580px] space-y-6 bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+              className="p-4 sm:p-6 lg:p-8 overflow-y-auto max-h-[580px] space-y-6 bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
             >
               {/* Metadata Grid */}
               <div className="border border-border rounded-lg overflow-hidden bg-muted/20">
-                <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-border text-xs">
-                  <div className="p-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-px bg-border text-xs">
+                  <div className="p-3 min-w-0 bg-card">
                     <span className="text-muted-foreground block text-[11px]">
                       Document Code
                     </span>
-                    <span className="font-mono font-semibold text-foreground">
+                    <span className="font-mono font-semibold text-foreground block break-words">
                       {selectedItem.documentCode}
                     </span>
                   </div>
-                  <div className="p-3">
+                  <div className="p-3 min-w-0 bg-card">
                     <span className="text-muted-foreground block text-[11px]">
                       Author
                     </span>
-                    <span className="font-medium text-foreground">
+                    <span className="font-medium text-foreground block break-words">
                       {selectedItem.authorName}
                     </span>
                   </div>
-                  <div className="p-3">
+                  <div className="p-3 min-w-0 bg-card">
                     <span className="text-muted-foreground block text-[11px]">
                       Target Department
                     </span>
-                    <span className="font-medium text-foreground">
+                    <span className="font-medium text-foreground block break-words">
                       {selectedItem.category || "General Quality"}
                     </span>
                   </div>
-                  <div className="p-3">
+                  <div className="p-3 min-w-0 bg-card">
                     <span className="text-muted-foreground block text-[11px]">
                       Lifecycle State
                     </span>
-                    <span className="font-medium text-amber-700 dark:text-amber-300">
-                      {selectedItem.lifecycleState}
-                    </span>
+                    <div className="mt-1">
+                      <LifecycleStatusBadge
+                        state={selectedItem.lifecycleState}
+                        size="sm"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -692,10 +693,10 @@ export function ApprovalsView({
             </div>
 
             {/* Sticky Action Bottom Bar (Master Review Controls) */}
-            <div className="p-4 px-6 bg-card border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 mt-auto">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="p-4 sm:px-6 bg-card border-t border-border flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mt-auto">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground min-w-0">
                 <Lock className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                <span>
+                <span className="min-w-0 break-words">
                   Sign-off binds your authenticated identity to payload digest{" "}
                   <span className="font-mono text-foreground font-semibold">
                     {selectedItem.documentSha256
@@ -705,7 +706,7 @@ export function ApprovalsView({
                 </span>
               </div>
 
-              <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full sm:w-auto sm:justify-end">
                 <Button
                   type="button"
                   variant="outline"
@@ -713,7 +714,7 @@ export function ApprovalsView({
                   onClick={() =>
                     setReauthModalState({ isOpen: true, decision: "REJECT" })
                   }
-                  className="border-destructive text-destructive hover:bg-destructive/10 dark:border-red-500/60 dark:text-red-400 dark:hover:bg-red-950/40 text-xs font-semibold"
+                  className="w-full sm:w-auto min-h-[44px] sm:min-h-0 border-destructive text-destructive hover:bg-destructive/10 dark:border-red-500/60 dark:text-red-400 dark:hover:bg-red-950/40 text-xs font-semibold"
                   data-testid="reject-workflow-button"
                 >
                   <XCircle className="h-3.5 w-3.5 mr-1.5" />
@@ -730,7 +731,7 @@ export function ApprovalsView({
                     !selectedItem.canApprove ||
                     selectedItem.isBlockedInactiveApprover
                   }
-                  className="bg-primary hover:bg-blue-700 text-primary-foreground text-xs font-semibold shadow-sm"
+                  className="w-full sm:w-auto min-h-[44px] sm:min-h-0 bg-primary hover:bg-blue-700 text-primary-foreground text-xs font-semibold shadow-sm"
                   data-testid="approve-sign-off-button"
                   title={
                     selectedItem.isBlockedInactiveApprover

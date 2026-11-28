@@ -265,9 +265,9 @@ export function GovernanceDashboardView({
       <div className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
         {/* Header Section */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-primary dark:text-blue-300 font-bold bg-primary/10 dark:bg-blue-500/15 px-2 py-0.5 rounded border border-primary/20 dark:border-blue-500/30">
+          <div className="space-y-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-2 mb-1">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-primary dark:text-blue-300 font-bold bg-primary/10 dark:bg-blue-500/15 px-2 py-0.5 rounded border border-primary/20 dark:border-blue-500/30 max-w-full break-words">
                 {tenantName} • Governance Workspace
               </span>
               <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -284,13 +284,13 @@ export function GovernanceDashboardView({
           </div>
 
           {/* Header Action Buttons */}
-          <div className="flex items-center gap-3 self-start lg:self-center shrink-0">
+          <div className="flex flex-wrap items-center gap-3 self-start lg:self-center min-w-0 max-w-full lg:shrink-0">
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={() => handleExportAuditSummary("json")}
-              className="gap-2 shadow-xs"
+              className="gap-2 shadow-xs min-h-[44px] sm:min-h-0"
             >
               <Download className="h-4 w-4 text-muted-foreground" />
               <span>Export Full Audit Summary</span>
@@ -299,7 +299,7 @@ export function GovernanceDashboardView({
               type="button"
               size="sm"
               onClick={() => router.push("/documents")}
-              className="gap-2"
+              className="gap-2 min-h-[44px] sm:min-h-0"
             >
               <PlusCircle className="h-4 w-4" />
               <span>+ Draft New SOP</span>

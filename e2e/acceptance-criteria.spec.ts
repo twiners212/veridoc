@@ -274,10 +274,14 @@ test.describe("Slice 1 Acceptance Criteria (AC-01 through AC-05)", () => {
     await expect(
       page.locator(`text=${e2ePendingCode} >> visible=true`).first()
     ).toBeVisible();
-    await expect(page.locator("text=SOP-ENG-104").first()).toBeVisible();
-    await expect(page.locator("text=SOP-MFG-001").first()).toBeVisible();
+    await expect(
+      page.locator("text=SOP-ENG-104 >> visible=true").first()
+    ).toBeVisible();
+    await expect(
+      page.locator("text=SOP-MFG-001 >> visible=true").first()
+    ).toBeVisible();
 
-    await page.locator("a", { hasText: e2ePendingCode }).first().click();
+    await page.locator("a:visible", { hasText: e2ePendingCode }).first().click();
     await page.waitForURL(/\/documents\/[0-9a-f-]+/i, { timeout: 15000 });
 
     await expect(
@@ -334,11 +338,11 @@ test.describe("Slice 1 Acceptance Criteria (AC-01 through AC-05)", () => {
       page.locator("h1", { hasText: "Governance Audit Trail" })
     ).toBeVisible();
 
-    const auditRows = page.locator("table tbody tr");
+    const auditRows = page.locator('[data-testid="audit-record-row"]:visible');
     await expect(auditRows.first()).toBeVisible({ timeout: 15000 });
     expect(await auditRows.count()).toBeGreaterThan(0);
 
-    const exportBtn = page.locator("button", { hasText: "Export" }).first();
+    const exportBtn = page.locator("button:visible", { hasText: "Export" }).first();
     await expect(exportBtn).toBeVisible();
     await expect(exportBtn).toBeEnabled();
 

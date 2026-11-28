@@ -68,7 +68,7 @@ export function ActivityFeed({
     setChainVerifiedMessage(null);
     setTimeout(() => {
       setIsVerifyingChain(false);
-      setChainVerifiedMessage(`Recalculated ${latestSequenceNumber.toLocaleString()} blocks. All hashes verified!`);
+      setChainVerifiedMessage(`Recalculated ${latestSequenceNumber.toLocaleString("en-US")} blocks. All hashes verified!`);
       setTimeout(() => setChainVerifiedMessage(null), 4000);
     }, 1200);
   };
@@ -165,7 +165,12 @@ export function ActivityFeed({
                       <span className="text-[10px] text-muted-foreground font-mono">
                         {typeof evt.timestamp === "string"
                           ? evt.timestamp
-                          : new Date(evt.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                          : `${new Intl.DateTimeFormat("en-US", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                              timeZone: "UTC",
+                            }).format(new Date(evt.timestamp))} UTC`}
                       </span>
                     </div>
 
@@ -217,7 +222,7 @@ export function ActivityFeed({
             <ArrowRight className="h-3 w-3" />
           </Link>
           <span className="font-mono text-[11px] text-muted-foreground">
-            Seq #{latestSequenceNumber.toLocaleString()}
+            Seq #{latestSequenceNumber.toLocaleString("en-US")}
           </span>
         </div>
       </div>

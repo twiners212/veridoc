@@ -1,19 +1,43 @@
 import AxeBuilder from "@axe-core/playwright";
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type BrowserContext, type Page } from "@playwright/test";
 
 type ThemeMode = "light" | "dark";
 type DemoRole = "WORKSPACE_ADMIN" | "APPROVER_REVIEWER" | "READER";
+
+type CachedSession = {
+  cookies: Awaited<ReturnType<BrowserContext["cookies"]>>;
+};
+
+const roleSessionCache = new Map<DemoRole, CachedSession>();
+
+const ROLE_LANDING_PATH: Record<DemoRole, string> = {
+  WORKSPACE_ADMIN: "/dashboard",
+  APPROVER_REVIEWER: "/approvals",
+  READER: "/to-read",
+};
 
 async function signInAsDemoRole(
   page: Page,
   role: DemoRole,
   expectedUrl: RegExp
 ): Promise<void> {
+  const cached = roleSessionCache.get(role);
+  if (cached) {
+    await page.context().clearCookies();
+    await page.context().addCookies(cached.cookies);
+    await page.goto(ROLE_LANDING_PATH[role]);
+    await page.waitForURL(expectedUrl, { timeout: 30000 });
+    return;
+  }
+
   await page.goto("/auth/sign-in");
   const demoBtn = page.getByTestId(`demo-login-${role}`);
   await expect(demoBtn).toBeVisible({ timeout: 15000 });
   await demoBtn.click();
   await page.waitForURL(expectedUrl, { timeout: 30000 });
+  roleSessionCache.set(role, {
+    cookies: await page.context().cookies(),
+  });
 }
 
 async function applyThemeMode(page: Page, mode: ThemeMode): Promise<void> {
@@ -65,6 +89,12 @@ async function auditRoute(
       scrollWidth: document.documentElement.scrollWidth,
       innerWidth: window.innerWidth,
     }));
+    if (options.isMobile) {
+      expect(
+        overflow.innerWidth,
+        `Viewport zoom-out regression detected on ${taggedLabel}: innerWidth=${overflow.innerWidth} !== expected ${options.viewportWidth}`
+      ).toBe(options.viewportWidth);
+    }
     expect(
       overflow.scrollWidth,
       `Horizontal overflow detected on ${taggedLabel}: scrollWidth=${overflow.scrollWidth} > innerWidth=${overflow.innerWidth}`
@@ -74,7 +104,7 @@ async function auditRoute(
   await applyThemeMode(page, "light");
 
   for (const label of options.checkRightEdgeButtons ?? []) {
-    const cta = page.locator("button, a", { hasText: label }).first();
+    const cta = page.locator("button:visible, a:visible", { hasText: label }).first();
     if ((await cta.count()) > 0 && (await cta.isVisible())) {
       if (options.isMobile) {
         await cta.scrollIntoViewIfNeeded();
@@ -187,7 +217,7 @@ function registerA11ySuite(params: {
         checkRightEdgeButtons: ["Workspace"],
       });
 
-      const firstDocLink = page.locator("a[href^='/documents/']").first();
+      const firstDocLink = page.locator("a[href^='/documents/']:visible").first();
       await expect(firstDocLink).toBeVisible({ timeout: 15000 });
       await firstDocLink.click();
       await page.waitForURL(/\/documents\/[0-9a-f-]+/i, { timeout: 15000 });
@@ -275,7 +305,7 @@ function registerA11ySuite(params: {
       });
 
       await page.goto("/to-read");
-      const readLink = page.locator("a[href*='/read/']").first();
+      const readLink = page.locator("a[href*='/read/']:visible").first();
       await expect(readLink).toBeVisible({ timeout: 15000 });
       await readLink.click();
       await page.waitForURL(/\/read\/[0-9a-f-]+/i, { timeout: 15000 });
@@ -300,5 +330,11 @@ registerA11ySuite({
 registerA11ySuite({
   label: "Mobile 375x812",
   viewport: { width: 375, height: 812 },
+  isMobile: true,
+});
+
+registerA11ySuite({
+  label: "Mobile 360x800",
+  viewport: { width: 360, height: 800 },
   isMobile: true,
 });

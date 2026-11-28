@@ -65,8 +65,8 @@ export function WorkspaceSettingsView({
               Manage member roles, hybrid creator/reader quotas (DEC-01), audience dispatch groups, and governance safety controls.
             </p>
           </div>
-          <div className="flex items-center space-x-2">
-            <Button onClick={() => setIsInviteOpen(true)} size="sm">
+          <div className="flex flex-wrap items-center gap-2">
+            <Button onClick={() => setIsInviteOpen(true)} size="sm" className="min-h-[44px] sm:min-h-0">
               <UserPlus className="h-4 w-4 mr-1.5" />
               <span>Invite Member</span>
             </Button>
@@ -130,7 +130,6 @@ export function WorkspaceSettingsView({
           <MembersTable
             members={data.members}
             currentUserId={currentUserId}
-            onInviteClick={() => setIsInviteOpen(true)}
             onEditClick={(member) => setEditingMember(member)}
           />
         )}

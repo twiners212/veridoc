@@ -309,14 +309,14 @@ export function AuditTrailView({
         </div>
 
         {/* Action CTAs */}
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto shrink-0">
           <Button
             type="button"
             variant="outline"
             size="sm"
             disabled={isVerifying}
             onClick={handleVerifyChain}
-            className="gap-1.5 text-xs font-medium"
+            className="min-h-[44px] sm:min-h-0 flex-1 sm:flex-initial justify-center gap-1.5 text-xs font-medium"
           >
             <CheckCircle2
               className={`h-4 w-4 text-primary dark:text-blue-400 ${
@@ -330,7 +330,7 @@ export function AuditTrailView({
             type="button"
             size="sm"
             onClick={() => setExportModalOpen(true)}
-            className="gap-1.5 text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90"
+            className="min-h-[44px] sm:min-h-0 flex-1 sm:flex-initial justify-center gap-1.5 text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90"
           >
             <Download className="h-4 w-4" />
             <span>Export Audit Packet (JSON / PDF)</span>
@@ -434,7 +434,7 @@ export function AuditTrailView({
             role="dialog"
             aria-modal="true"
             aria-labelledby="export-audit-modal-title"
-            className="bg-card text-card-foreground border border-border rounded-xl shadow-2xl p-6 max-w-md w-full flex flex-col gap-4"
+            className="bg-card text-card-foreground border border-border rounded-xl shadow-2xl p-6 max-w-md w-full max-h-[90dvh] overflow-y-auto flex flex-col gap-4"
           >
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 id="export-audit-modal-title" className="text-sm font-bold text-foreground">
@@ -456,7 +456,7 @@ export function AuditTrailView({
               acknowledgments.
             </p>
 
-            <div className="grid grid-cols-2 gap-3 pt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <button
                 type="button"
                 onClick={() => handleExport("json")}

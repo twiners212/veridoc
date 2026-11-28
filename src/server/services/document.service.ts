@@ -8,7 +8,11 @@ import {
   documentVersions,
   users,
 } from "@/db/schema";
-import { canViewDocumentVersion, type ActiveMembership } from "@/server/policies";
+import {
+  buildLifecycleFilterForRole,
+  canViewDocumentVersion,
+  type ActiveMembership,
+} from "@/server/policies";
 import { DomainError } from "@/types/errors";
 import type {
   DocumentDetailResult,
@@ -82,25 +86,16 @@ export async function listDocumentsInTx(
   tenantId: string,
   filters: Omit<ListDocumentsFilters, "tenantId">
 ): Promise<ListDocumentsResult> {
-  let docQuery = tx
-    .select({
-      id: documents.id,
-      tenantId: documents.tenantId,
-      documentCode: documents.documentCode,
-      category: documents.category,
-      createdBy: documents.createdBy,
-      createdAt: documents.createdAt,
-      updatedAt: documents.updatedAt,
-    })
-    .from(documents)
-    .where(eq(documents.tenantId, tenantId))
-    .$dynamic();
+  const page = filters.page ?? 1;
+  const limit = filters.limit ?? 20;
 
-  if (filters.category && filters.category !== "ALL") {
-    docQuery = docQuery.where(eq(documents.category, filters.category));
+  const versionConditions = [
+    eq(documentVersions.tenantId, tenantId),
+    buildLifecycleFilterForRole(actor.role, actor.userId),
+  ];
+  if (actor.role === "READER") {
+    versionConditions.push(eq(documentVersions.lifecycleState, "PUBLISHED"));
   }
-
-  const allDocs = await docQuery;
 
   const allVersions = await tx
     .select({
@@ -122,7 +117,17 @@ export async function listDocumentsInTx(
     })
     .from(documentVersions)
     .leftJoin(users, eq(users.id, documentVersions.authorId))
-    .where(eq(documentVersions.tenantId, tenantId));
+    .where(and(...versionConditions));
+
+  if (allVersions.length === 0) {
+    return {
+      documents: [],
+      total: 0,
+      page,
+      limit,
+      totalPages: 1,
+    };
+  }
 
   const assignedApproverMap =
     actor.role === "APPROVER_REVIEWER"
@@ -146,6 +151,38 @@ export async function listDocumentsInTx(
     list.push(v);
     versionsByDoc.set(v.documentId, list);
   }
+
+  const visibleDocIds = Array.from(versionsByDoc.keys());
+  if (visibleDocIds.length === 0) {
+    return {
+      documents: [],
+      total: 0,
+      page,
+      limit,
+      totalPages: 1,
+    };
+  }
+
+  const docConditions = [
+    eq(documents.tenantId, tenantId),
+    inArray(documents.id, visibleDocIds),
+  ];
+  if (filters.category && filters.category !== "ALL") {
+    docConditions.push(eq(documents.category, filters.category));
+  }
+
+  const allDocs = await tx
+    .select({
+      id: documents.id,
+      tenantId: documents.tenantId,
+      documentCode: documents.documentCode,
+      category: documents.category,
+      createdBy: documents.createdBy,
+      createdAt: documents.createdAt,
+      updatedAt: documents.updatedAt,
+    })
+    .from(documents)
+    .where(and(...docConditions));
 
   const items: DocumentListItem[] = [];
   for (const doc of allDocs) {
@@ -217,8 +254,6 @@ export async function listDocumentsInTx(
   });
 
   const total = items.length;
-  const page = filters.page ?? 1;
-  const limit = filters.limit ?? 20;
   const totalPages = Math.max(1, Math.ceil(total / limit));
   const paginated = items.slice((page - 1) * limit, page * limit);
 
